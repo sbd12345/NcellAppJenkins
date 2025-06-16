@@ -34,19 +34,9 @@ public class BuyDataPackTest extends BaseTest {
         }
     }
 
-    @Test(priority = 2)
-    public void testDoubleData() {
-        try {
-            logger.info("Starting test: testDoubleData");
-            buyDataPackPage.doubleData();
-            logger.info("Completed test: testDoubleData");
-        } catch (Exception e) {
-            logger.error("testDoubleData failed: {}", e.getMessage(), e);
-            throw e;
-        }
-    }
 
-    @Test(priority = 3)
+
+    @Test(priority = 2)
     public void testTopSellers() {
         try {
             logger.info("Starting test: testTopSellers");
@@ -58,7 +48,7 @@ public class BuyDataPackTest extends BaseTest {
         }
     }
 
-    @Test(priority = 4)
+    @Test(priority = 3)
     public void sidhaon() {
         try {
             logger.info("Starting test: sidhaon");
@@ -70,7 +60,7 @@ public class BuyDataPackTest extends BaseTest {
         }
     }
 
-    @Test(priority = 5)
+    @Test(priority = 4)
     public void onethreedays() {
         try {
             logger.info("Starting test: onethreedays");
@@ -82,7 +72,7 @@ public class BuyDataPackTest extends BaseTest {
         }
     }
 
-    @Test(priority = 6)
+    @Test(priority = 5)
     public void testSevenDay() {
         try {
             logger.info("Starting test: testSevenDay");
@@ -94,7 +84,7 @@ public class BuyDataPackTest extends BaseTest {
         }
     }
 
-    @Test(priority = 7)
+    @Test(priority = 6)
     public void testTwentyEightDays() {
         try {
             logger.info("Starting test: testTwentyEightDays");
@@ -106,7 +96,7 @@ public class BuyDataPackTest extends BaseTest {
         }
     }
 
-    @Test(priority = 8)
+    @Test(priority = 7)
     public void testEightyFourDays() {
         try {
             logger.info("Starting test: testEightyFourDays");

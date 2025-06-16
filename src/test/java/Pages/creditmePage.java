@@ -35,17 +35,37 @@ public class creditmePage {
         this.screenshotPath = System.getProperty("user.dir") + "/screenshots/";
     }
 
-    private final By creditMeLocator = MobileBy.AccessibilityId("Credit Me");
-    private final By downArrowLocator = MobileBy.xpath("//android.view.ViewGroup[@resource-id=\"card-container\"]");
-    private final By numberLocator = MobileBy.xpath("//android.view.ViewGroup[@content-desc=\"Request To:, Enter Amount (NPR), This service is subjected to service charges + government taxes\"]/android.view.ViewGroup[1]/android.widget.EditText");
-    private final By enterAmountLocator = MobileBy.AccessibilityId("Rs. 100");
-    private final By requestLocator = MobileBy.xpath("//android.widget.TextView[@text=\"Request\"]");
+    // Dynamic XPath Locators using methods
+    private By getCardContainerLocator() {
+        return By.xpath("//android.view.ViewGroup[contains(@resource-id, 'card-container')]");
+    }
 
-    // --- Public flows ---
+    private By getCreditMeButtonLocator() {
+        return MobileBy.AccessibilityId("Credit Me");
+    }
+
+    private By getNumberFieldLocator() {
+        return By.xpath("//android.widget.EditText[contains(@content-desc,'Request To') or @index='0']");
+    }
+
+    private By getAmountFieldLocator() {
+        return By.xpath("//*[contains(@content-desc, 'Rs')]");
+    }
+
+    private By getRequestButtonLocator() {
+        return By.xpath("//*[translate(@text,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')='request']");
+    }
+
+    private By getOkButtonLocator() {
+        return MobileBy.AccessibilityId("OK");
+    }
+
+    // Static locator for Home Page Back Button (keep as-is)
+    private final By homePageBackButtonLocator = MobileBy.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.view.ViewGroup");
 
     public void openCreditMeSection() {
         try {
-            clickElementWithSwipe(downArrowLocator, "Down Arrow");
+            clickElementWithSwipe(getCardContainerLocator(), "Down Arrow");
             logger.info("Opened Credit Me section by clicking down arrow.");
         } catch (Exception e) {
             logger.error("Failed to open Credit Me section: {}", e.getMessage(), e);
@@ -56,10 +76,12 @@ public class creditmePage {
 
     public void performCreditRequest() {
         try {
-            clickElement(creditMeLocator, "Credit Me");
+            clickElement(getCreditMeButtonLocator(), "Credit Me");
             enterMobileNumber(ConfigReader.getProperty("number"));
-            clickElement(enterAmountLocator, "Enter Amount");
-            clickElement(requestLocator, "Request");
+            clickElement(getAmountFieldLocator(), "Enter Amount");
+            clickElement(getRequestButtonLocator(), "Request");
+            clickElement(getOkButtonLocator(), "OK");
+            clickElement(homePageBackButtonLocator, "Home Page Back Button/Icon");
             logger.info("Performed credit request successfully.");
         } catch (Exception e) {
             logger.error("Credit request failed: {}", e.getMessage(), e);
@@ -69,13 +91,11 @@ public class creditmePage {
     }
 
     private void enterMobileNumber(String phoneNumber) {
-        MobileElement numberField = (MobileElement) wait.until(ExpectedConditions.elementToBeClickable(numberLocator));
+        MobileElement numberField = (MobileElement) wait.until(ExpectedConditions.elementToBeClickable(getNumberFieldLocator()));
         numberField.clear();
         numberField.sendKeys(phoneNumber);
         logger.info("Entered mobile number: {}", phoneNumber);
     }
-
-    // --- Core utilities ---
 
     private void clickElementWithSwipe(By locator, String name) {
         int maxSwipes = 5;
@@ -125,7 +145,7 @@ public class creditmePage {
         int width = driver.manage().window().getSize().width;
         int startX = width / 2;
         int startY = (int) (height * 0.8);
-        int endY = (int) (height * 0.3);
+        int endY = (int) (height * 0.1);
 
         logger.debug("Performing swipe up gesture.");
         new TouchAction<>(driver)
@@ -138,7 +158,7 @@ public class creditmePage {
 
     private void waitAfterSwipe() {
         try {
-            Thread.sleep(20000);
+            Thread.sleep(2000); // Reduced to 2 seconds for practical use
         } catch (InterruptedException e) {
             logger.warn("Interrupted during waitAfterSwipe", e);
             Thread.currentThread().interrupt();

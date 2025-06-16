@@ -68,7 +68,7 @@ public class UtilityTest extends BaseTest {
         }
     }
 
-    @Test(priority = 5)
+    @Test(priority = 7)
     public void openEplLiveScoreTest() {
         logger.info("Starting test: openEplLiveScoreTest");
         try {
@@ -81,7 +81,7 @@ public class UtilityTest extends BaseTest {
         }
     }
 
-    @Test(priority = 6)
+    @Test(priority = 5)
     public void openWeatherTest() {
         logger.info("Starting test: openWeatherTest");
         try {
@@ -94,7 +94,7 @@ public class UtilityTest extends BaseTest {
         }
     }
 
-    @Test(priority = 7)
+    @Test(priority = 6)
     public void openExchangeRateTest() {
         logger.info("Starting test: openExchangeRateTest");
         try {

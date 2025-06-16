@@ -22,7 +22,7 @@ public class PlaygameTest extends BaseTest {
         playgamePage = new PlaygamePage(driver);
     }
 
-    @Test(priority = 1)
+    @Test(priority = 7)
     public void testOpenPoliceGame() {
         try {
             logger.info("Starting test: testOpenPoliceGame");
@@ -94,7 +94,7 @@ public class PlaygameTest extends BaseTest {
         }
     }
 
-    @Test(priority = 7)
+    @Test(priority = 1)
     public void testOpenTimberGuyGame() {
         try {
             logger.info("Starting test: testOpenTimberGuyGame");

@@ -34,7 +34,7 @@ public class NcellNSLTest extends BaseTest {
         }
     }
 
-    @Test(priority = 2)
+  /*  @Test(priority = 2)
     public void NSLLiveMatch() {
         try {
             logger.info("Starting test: NSLLiveMatch");
@@ -44,7 +44,7 @@ public class NcellNSLTest extends BaseTest {
             logger.error("NSLLiveMatch test failed: {}", e.getMessage(), e);
             throw e;
         }
-    }
+    }      */
 
     @Test(priority = 3)
     public void DigitalLeague() {

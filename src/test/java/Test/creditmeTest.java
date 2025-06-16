@@ -1,14 +1,17 @@
 package Test;
 
-import org.testng.annotations.Test;
-import org.testng.annotations.AfterSuite;
-import org.testng.annotations.Listeners;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import Base.BaseTest;
 import Pages.creditmePage;
 import Listeners.CustomTestListener;
+
+import io.appium.java_client.android.nativekey.AndroidKey;
+import io.appium.java_client.android.nativekey.KeyEvent;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.Listeners;
+import org.testng.annotations.Test;
 
 @Listeners(CustomTestListener.class)
 public class creditmeTest extends BaseTest {
@@ -31,5 +34,4 @@ public class creditmeTest extends BaseTest {
 
    
 }
-
 

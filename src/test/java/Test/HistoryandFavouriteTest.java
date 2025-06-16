@@ -17,7 +17,7 @@ public class HistoryandFavouriteTest extends BaseTest {
         try {
             logger.info("Starting test: HistoryandFavouriteTest");
             HistoryandFavouritePage hf = new HistoryandFavouritePage(driver); 
-            hf.closeBanner();
+          //  hf.closeBanner();
             hf.History();
             hf.Favourite();  
             logger.info("HistoryandFavouriteTest completed successfully");

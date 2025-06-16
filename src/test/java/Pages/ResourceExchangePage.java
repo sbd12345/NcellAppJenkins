@@ -6,6 +6,7 @@ import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.PointOption;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -31,22 +32,37 @@ public class ResourceExchangePage {
     private final WebDriverWait wait;
     private static final Logger logger = LogManager.getLogger(ResourceExchangePage.class);
 
+    private final By homePageBackButtonLocator = MobileBy.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.view.ViewGroup");
+
     public ResourceExchangePage(AndroidDriver<MobileElement> driver) {
         this.driver = driver;
         this.wait = new WebDriverWait(driver, 40);
         logger.info("Initialized ResourceExchangePage");
     }
 
-    private final By rescourceexchangeLocator = MobileBy.AccessibilityId("Resource Exchange");
-    private final By downArrowLocator = MobileBy.xpath("//android.view.ViewGroup[@resource-id=\"card-container\"]");
- // private final By numberLocator = MobileBy.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[13]/android.widget.EditText");
-    //  private final By textLocator = MobileBy.xpath("//android.widget.EditText[@text=\"160 characters remaining\"]");
-    //  private final By sendLocator = MobileBy.xpath("//android.widget.Button[@content-desc=\"Send\"]/android.view.ViewGroup/android.view.View");
+    public By getResourceExchangeLocator() {
+        return MobileBy.AccessibilityId("Resource Exchange");
+    }
 
+    public By getDownArrowLocator() {
+        return MobileBy.xpath("//android.view.ViewGroup[@resource-id='card-container']");
+    }
+
+    public By getNumberLocator() {
+        return MobileBy.xpath("//android.widget.EditText[contains(@text, 'Enter')]");
+    }
+
+    public By getTextLocator() {
+        return MobileBy.xpath("//android.widget.EditText[contains(@text,'160 characters remaining')]");
+    }
+
+    public By getSendLocator() {
+        return MobileBy.xpath("//android.widget.Button[@content-desc='Send']/android.view.ViewGroup/android.view.View");
+    }
 
     public void rs() {
         try {
-            clickElementWithSwipe(downArrowLocator, "Down Arrow");
+            clickElementWithSwipe(getDownArrowLocator(), "Down Arrow");
         } catch (Exception e) {
             logger.error("Error in rs(): {}", e.getMessage(), e);
             takeScreenshot("rs_Error");
@@ -55,15 +71,17 @@ public class ResourceExchangePage {
 
     public void s() {
         try {
-            clickElement(rescourceexchangeLocator, "Resource Exchange");
-            Thread.sleep(15000);
+            clickElement(getResourceExchangeLocator(), "Resource Exchange");
+            Thread.sleep(25000);
+            clickElement(getNumberLocator(), "Enter Number");
+            clickElement(getTextLocator(), "Enter Message");
+            clickElement(getSendLocator(), "Send");
+            clickElement(homePageBackButtonLocator, "Home Page Back Button/Icon");
         } catch (Exception e) {
             logger.error("Error in s(): {}", e.getMessage(), e);
             takeScreenshot("s_Error");
         }
     }
-
-    // --- Core utilities ---
 
     private void clickElementWithSwipe(By locator, String name) {
         int maxSwipes = 5;
@@ -132,7 +150,6 @@ public class ResourceExchangePage {
         }
     }
 
-    // --- Screenshot utility ---
     public void takeScreenshot(String screenshotName) {
         TakesScreenshot screenshot = (TakesScreenshot) driver;
         File srcFile = screenshot.getScreenshotAs(OutputType.FILE);
@@ -158,8 +175,3 @@ public class ResourceExchangePage {
         }
     }
 }
-
-
-
-
-

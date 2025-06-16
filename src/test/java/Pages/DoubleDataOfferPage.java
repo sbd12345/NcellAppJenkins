@@ -27,43 +27,64 @@ public class DoubleDataOfferPage {
     private final WebDriverWait wait;
     private final String screenshotPath;
 
+    // STATIC locator remains as final By field
+    private final By doubleDataOfferLocator = MobileBy.AccessibilityId("Double Data Offer");
+
     public DoubleDataOfferPage(AndroidDriver<MobileElement> driver) {
         this.driver = driver;
         this.wait = new WebDriverWait(driver, 35);
         this.screenshotPath = System.getProperty("user.dir") + "/screenshots/";
     }
 
-    private final By doubleDataOfferLocator = MobileBy.AccessibilityId("Double Data Offer");
-    private final By renewalLocator = MobileBy.xpath("(//android.view.ViewGroup[@content-desc=\"30 Day Renewal\"])[1]");
-    private final By paymentMethodLocator = MobileBy.xpath("//android.view.ViewGroup[@content-desc=\"Pay By Balance\"]");
-    private final By confirmLocator = MobileBy.xpath("//android.view.ViewGroup[@content-desc=\"Confirm\"]");
-    private final By cancelLocator = MobileBy.xpath("//android.widget.Button[@content-desc=\"Cancel\"]/android.view.ViewGroup");
-    private final By daysOneTimeLocator = MobileBy.xpath("(//android.view.ViewGroup[@content-desc=\"28 Day One Time\"])[1]/android.view.ViewGroup");
-    private final By buyPackLocator = MobileBy.xpath("//android.widget.Button[@content-desc=\"Buy pack\"]/android.view.ViewGroup/android.view.View");
+    // DYNAMIC XPath locators now as methods returning By
+
+    private By renewalLocator() {
+        return MobileBy.xpath("(//android.view.ViewGroup[contains(@content-desc, '30 Day Renewal')])[1]");
+    }
+
+    private By paymentMethodLocator() {
+        return MobileBy.xpath("//android.view.ViewGroup[contains(@content-desc, 'Pay By Balance')]");
+    }
+
+    private By confirmLocator() {
+        return MobileBy.xpath("//android.view.ViewGroup[contains(@content-desc, 'Confirm')]");
+    }
+
+    private By cancelLocator() {
+        return MobileBy.xpath("//android.widget.Button[contains(@content-desc, 'Cancel')]/android.view.ViewGroup");
+    }
+
+    private By daysOneTimeLocator() {
+        return MobileBy.xpath("(//android.view.ViewGroup[contains(@content-desc, '28 Day One Time')])[1]/android.view.ViewGroup");
+    }
+
+    private By buyPackLocator() {
+        return MobileBy.xpath("//android.widget.Button[contains(@content-desc, 'Buy pack')]/android.view.ViewGroup/android.view.View");
+    }
 
     public void doubleData() {
         try {
             clickElementWithSwipe(doubleDataOfferLocator, "Double Data Offer");
 
-            MobileElement renewalBtn = (MobileElement) wait.until(ExpectedConditions.visibilityOfElementLocated(renewalLocator));
+            MobileElement renewalBtn = (MobileElement) wait.until(ExpectedConditions.visibilityOfElementLocated(renewalLocator()));
             renewalBtn.click();
             Thread.sleep(3000);
 
-            MobileElement cancelBtn = (MobileElement) wait.until(ExpectedConditions.visibilityOfElementLocated(cancelLocator));
+            MobileElement cancelBtn = (MobileElement) wait.until(ExpectedConditions.visibilityOfElementLocated(cancelLocator()));
             cancelBtn.click();
             driver.navigate().back();
 
-            MobileElement dayOneTimeBtn = (MobileElement) wait.until(ExpectedConditions.visibilityOfElementLocated(daysOneTimeLocator));
+            MobileElement dayOneTimeBtn = (MobileElement) wait.until(ExpectedConditions.visibilityOfElementLocated(daysOneTimeLocator()));
             dayOneTimeBtn.click();
             Thread.sleep(3000);
 
-            MobileElement buyPackBtn = (MobileElement) wait.until(ExpectedConditions.visibilityOfElementLocated(buyPackLocator));
+            MobileElement buyPackBtn = (MobileElement) wait.until(ExpectedConditions.visibilityOfElementLocated(buyPackLocator()));
             buyPackBtn.click();
 
-            MobileElement paymentBtn = (MobileElement) wait.until(ExpectedConditions.visibilityOfElementLocated(paymentMethodLocator));
+            MobileElement paymentBtn = (MobileElement) wait.until(ExpectedConditions.visibilityOfElementLocated(paymentMethodLocator()));
             paymentBtn.click();
 
-            MobileElement confirmBtn = (MobileElement) wait.until(ExpectedConditions.visibilityOfElementLocated(confirmLocator));
+            MobileElement confirmBtn = (MobileElement) wait.until(ExpectedConditions.visibilityOfElementLocated(confirmLocator()));
             confirmBtn.click();
 
             logger.info("Double Data Offer purchase flow completed successfully.");
@@ -144,5 +165,3 @@ public class DoubleDataOfferPage {
         }
     }
 }
-
-

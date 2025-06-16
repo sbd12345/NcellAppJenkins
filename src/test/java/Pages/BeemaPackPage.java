@@ -7,7 +7,6 @@ import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.PointOption;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
@@ -16,7 +15,6 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
-import org.testng.annotations.AfterSuite;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,14 +36,14 @@ public class BeemaPackPage {
         this.driver = driver;
         this.wait = new WebDriverWait(driver, 80);
     }
-    
+
     private final By beemapackLocator = MobileBy.AccessibilityId("Beema Packs");
-    private final By buyPackLocator = MobileBy.xpath("(//android.view.ViewGroup[@content-desc=\"Buy Pack\"])[1]/android.view.ViewGroup");
-    private final By paymentMethodLocator = MobileBy.xpath("//android.view.ViewGroup[@content-desc=\"Pay By Balance\"]");
-    private final By confirmLocator = MobileBy.xpath("//android.view.ViewGroup[@content-desc=\"Confirm\"]");
-    private final By noLocator = MobileBy.xpath("//android.view.ViewGroup[@content-desc=\"NO\"]/android.view.ViewGroup");
-    private final By detailLocator = MobileBy.xpath("(//android.view.ViewGroup[@content-desc=\"Details\"])[1]");
-    private final By buyPackLocator1 = MobileBy.xpath("//android.widget.Button[@content-desc=\"Buy pack\"]/android.view.ViewGroup/android.view.View");
+    private final By buyPackLocator = getDynamicXpath("(//android.view.ViewGroup[@content-desc='Buy Pack'])[1]/android.view.ViewGroup");
+    private final By paymentMethodLocator = getDynamicXpath("//android.view.ViewGroup[@content-desc='Pay By Balance']");
+    private final By confirmLocator = getDynamicXpath("//android.view.ViewGroup[@content-desc='Confirm']");
+    private final By noLocator = getDynamicXpath("//android.view.ViewGroup[@content-desc='NO']/android.view.ViewGroup");
+    private final By detailLocator = getDynamicXpath("(//android.view.ViewGroup[@content-desc='Details'])[1]");
+    private final By buyPackLocator1 = getDynamicXpath("//android.widget.Button[@content-desc='Buy pack']/android.view.ViewGroup/android.view.View");
 
     public void beemapack() {
         try {
@@ -61,7 +59,7 @@ public class BeemaPackPage {
         clickElement(beemapackLocator, "Beema Pack");
         clickElement(buyPackLocator, "Buy Pack");
         Thread.sleep(19000);
-        clickElement(buyPackLocator, "Buy Pack");       
+        clickElement(buyPackLocator, "Buy Pack");
         clickElement(paymentMethodLocator, "Pay By Balance");
         clickElement(confirmLocator, "Confirm Payment");
         clickElement(noLocator, "No Button to Close Confirmation");
@@ -143,7 +141,7 @@ public class BeemaPackPage {
             Thread.currentThread().interrupt();
         }
     }
-    
+
     public void takeScreenshot(String screenshotName) {
         TakesScreenshot screenshot = (TakesScreenshot) driver;
         File srcFile = screenshot.getScreenshotAs(OutputType.FILE);
@@ -168,4 +166,9 @@ public class BeemaPackPage {
             logger.error("Failed to save screenshot: {}", e.getMessage());
         }
     }
+
+    private By getDynamicXpath(String xpath) {
+        return MobileBy.xpath(xpath);
+    }
 }
+

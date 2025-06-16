@@ -35,7 +35,7 @@ public class MyNcellServiceTest extends BaseTest {
         }
     }
 
-    @Test(priority = 2)
+    @Test(priority = 3)
     public void testEmergencyServices() {
         try {
             logger.info("Starting test: testEmergencyServices");
@@ -47,7 +47,7 @@ public class MyNcellServiceTest extends BaseTest {
         }
     }
 
-    @Test(priority = 3)
+    @Test(priority = 4)
     public void testTollFreeNumbers() {
         try {
             logger.info("Starting test: testTollFreeNumbers");
@@ -59,7 +59,7 @@ public class MyNcellServiceTest extends BaseTest {
         }
     }
 
-    @Test(priority = 4)
+    @Test(priority = 2)
     public void testEsim() {
         try {
             logger.info("Starting test: testEsim");

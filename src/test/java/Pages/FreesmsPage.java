@@ -38,14 +38,28 @@ public class FreesmsPage {
     }
 
     private final By freesmsLocator = MobileBy.AccessibilityId("Free SMS");
-    private final By downArrowLocator = MobileBy.xpath("//android.view.ViewGroup[@resource-id=\"card-container\"]");
-    private final By numberLocator = MobileBy.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[13]/android.widget.EditText");
-    private final By textLocator = MobileBy.xpath("//android.widget.EditText[@text=\"160 characters remaining\"]");
-    private final By sendLocator = MobileBy.xpath("//android.widget.Button[@content-desc=\"Send\"]/android.view.ViewGroup/android.view.View");
+    private final By homePageBackButtonLocator = MobileBy.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.view.ViewGroup");
+
+
+    private By getDownArrowLocator() {
+        return By.xpath("//android.view.ViewGroup[@resource-id='card-container']");
+    }
+
+    private By getNumberLocator() {
+        return By.xpath("//android.widget.EditText[contains(@text, 'Enter Number') or @index='0']");
+    }
+
+    private By getTextLocator() {
+        return By.xpath("//android.widget.EditText[@text='160 characters remaining']");
+    }
+
+    private By getSendLocator() {
+        return By.xpath("//android.widget.Button[@content-desc='Send']/android.view.ViewGroup/android.view.View");
+    }
 
     public void freesms() {
         try {
-            clickElementWithSwipe(downArrowLocator, "Down Arrow");
+            clickElementWithSwipe(getDownArrowLocator(), "Down Arrow");
         } catch (Exception e) {
             logger.error("Error in freesms(): {}", e.getMessage(), e);
             takeScreenshot("FreeSMS_Failure");
@@ -58,7 +72,7 @@ public class FreesmsPage {
             clickElement(freesmsLocator, "Free SMS");
             enterMobileNumber(ConfigReader.getProperty("e"));
             enterText(ConfigReader.getProperty("d"));
-            clickElement(sendLocator, "Send");
+            clickElement(getSendLocator(), "Send");
         } catch (Exception e) {
             logger.error("Error in sms() flow: {}", e.getMessage(), e);
             takeScreenshot("SMS_Flow_Failure");
@@ -68,7 +82,7 @@ public class FreesmsPage {
 
     private void enterMobileNumber(String phoneNumber) {
         try {
-            MobileElement numberField = (MobileElement) wait.until(ExpectedConditions.elementToBeClickable(numberLocator));
+            MobileElement numberField = (MobileElement) wait.until(ExpectedConditions.elementToBeClickable(getNumberLocator()));
             numberField.clear();
             numberField.sendKeys(phoneNumber);
             logger.info("Entered mobile number: {}", phoneNumber);
@@ -81,9 +95,10 @@ public class FreesmsPage {
 
     private void enterText(String text) {
         try {
-            MobileElement textField = (MobileElement) wait.until(ExpectedConditions.elementToBeClickable(textLocator));
+            MobileElement textField = (MobileElement) wait.until(ExpectedConditions.elementToBeClickable(getTextLocator()));
             textField.clear();
             textField.sendKeys(text);
+            clickElement(homePageBackButtonLocator, "Home Page Back Button/Icon");
             logger.info("Entered text: {}", text);
         } catch (Exception e) {
             logger.error("Failed to enter text: {}", e.getMessage(), e);
@@ -91,7 +106,6 @@ public class FreesmsPage {
             Assert.fail("Failed to enter text: " + e.getMessage());
         }
     }
-
 
     private void clickElementWithSwipe(By locator, String name) {
         int maxSwipes = 5;
@@ -154,7 +168,7 @@ public class FreesmsPage {
 
     private void waitAfterSwipe() {
         try {
-            Thread.sleep(20000);
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             logger.warn("Interrupted during swipe wait", e);
             Thread.currentThread().interrupt();
@@ -186,3 +200,5 @@ public class FreesmsPage {
         }
     }
 }
+
+

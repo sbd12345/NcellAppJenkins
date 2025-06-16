@@ -14,7 +14,6 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -36,19 +35,33 @@ public class GuessandwinPage {
         this.wait = new WebDriverWait(driver, 40);
     }
 
-    private final By downArrowLocator = MobileBy.xpath("//android.view.ViewGroup[@resource-id=\"card-container\"]");
-    private final By guessAndWinLocator = MobileBy.AccessibilityId("Guess and Win");
+    private By downArrowLocator() {
+        return MobileBy.xpath("//android.view.ViewGroup[@resource-id='card-container']");
+    }
+
+    private By guessAndWinLocator() {
+        return MobileBy.AccessibilityId("Guess & Win");
+    }
+
     // private final By enterPriceLocator = MobileBy.xpath("//android.widget.EditText[@resource-id='predicted-price']");
-    private final By submitGuessLocator = MobileBy.xpath("//android.widget.Button[@text='Submit your Guess!']");
+
+    private By submitGuessLocator() {
+        return MobileBy.xpath("//android.widget.Button[@text='Submit your Guess!']");
+    }
+
+   
+    private final By homePageBackButtonLocator = MobileBy.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.view.ViewGroup");
+
 
 
     public void guessAndWin() {
         try {
-            clickElementWithSwipe(downArrowLocator, "Down Arrow");
+            // clickElementWithSwipe(downArrowLocator, "Down Arrow");
             Thread.sleep(2000);
-            clickElementWithSwipe(guessAndWinLocator, "Guess and Win");
-            // enterPrice(ConfigReader.getProperty("a"));  // Uncomment and implement if needed
-            clickElementWithSwipe(submitGuessLocator, "Submit your Guess!");
+            clickElementWithSwipe(guessAndWinLocator(), "Guess & Win");
+            // enterPrice(ConfigReader.getProperty("a"));  
+            // clickElementWithSwipe(submitGuessLocator(), "Submit your Guess!");
+            clickElement(homePageBackButtonLocator, "Home Page Back Button/Icon");
         } catch (Exception e) {
             logger.error("Guess and Win flow failed: {}", e.getMessage(), e);
             takeScreenshot("GuessAndWin_Failure");
@@ -56,7 +69,6 @@ public class GuessandwinPage {
         }
     }
 
-    // --- Input Methods ---
     /*
     private void enterPrice(String value) {
         try {
@@ -120,7 +132,7 @@ public class GuessandwinPage {
         int width = driver.manage().window().getSize().width;
         int startX = width / 2;
         int startY = (int) (height * 0.8);
-        int endY = (int) (height * 0.3);
+        int endY = (int) (height * 0.1);
 
         logger.debug("Performing swipe up gesture.");
         new TouchAction<>(driver)
@@ -165,4 +177,3 @@ public class GuessandwinPage {
         }
     }
 }
-

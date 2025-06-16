@@ -23,13 +23,24 @@ public class MyPackPage {
 
     private AndroidDriver<MobileElement> driver;
 
-    private By crossIconLocator = By.xpath("//android.widget.TextView[@text='']");
-    private By myPackLocator = By.xpath("//android.widget.TextView[@text=\"MY PACKS \"]");
-    private By dataLocator = By.xpath("//android.widget.TextView[@text=\"Data\"]");
-    private By voiceLocator = By.xpath("//android.widget.TextView[@text=\"Voice\"]");
+    private final String xpathCrossIcon = "//android.widget.TextView[@text='']";
+    private final String xpathMyPack = "//android.widget.TextView[@text=\"MY PACKS \"]";
+    private final String xpathData = "//android.widget.TextView[@text=\"Data\"]";
+    private final String xpathVoice = "//android.widget.TextView[@text=\"Voice\"]";
+
+    private By crossIconLocator;
+    private By myPackLocator;
+    private By dataLocator;
+    private By voiceLocator;
 
     public MyPackPage(AndroidDriver<MobileElement> driver) {
         this.driver = driver;
+
+        
+        crossIconLocator = By.xpath(xpathCrossIcon);
+        myPackLocator = By.xpath(xpathMyPack);
+        dataLocator = By.xpath(xpathData);
+        voiceLocator = By.xpath(xpathVoice);
     }
 
     private MobileElement waitForElement(By locator, int timeoutInSeconds) {

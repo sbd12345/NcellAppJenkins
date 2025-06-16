@@ -37,7 +37,6 @@ public class UtilitiesPage {
         this.screenshotPath = System.getProperty("user.dir") + "/screenshots/";
     }
 
-    // Locators
     private final By nepaliNewsLocator = MobileBy.AccessibilityId("Nepali News");
     private final By horoscopeLocator = MobileBy.AccessibilityId("Horoscope");
     private final By goldSilverPriceLocator = MobileBy.AccessibilityId("Gold/Silver Price");
@@ -46,16 +45,30 @@ public class UtilitiesPage {
     private final By eplLiveScoreLocator = MobileBy.AccessibilityId("EPL Live Score");
     private final By weatherLocator = MobileBy.AccessibilityId("Weather");
 
-    // Weather Tabs
-    private final By weatherTodayLocator = By.xpath("//android.view.View[@resource-id=\"rc-tabs-1-tab-1\"]");
-    private final By weatherTonightLocator = By.xpath("//android.view.View[@resource-id=\"rc-tabs-1-tab-2\"]");
 
-    // Horoscope Tabs
-    private final By horoscopeDailyTab = By.xpath("//android.view.View[@resource-id='rc-tabs-0-tab-1']");
-    private final By horoscopeMonthlyTab = By.xpath("//android.view.View[@resource-id='rc-tabs-0-tab-2']");
-    private final By horoscopeYearlyTab = By.xpath("//android.view.View[@resource-id='rc-tabs-0-tab-3']");
+    private By weatherTodayLocator() {
+        return getTabByResourceId("rc-tabs-1-tab-1");
+    }
 
-    // ------------------ Public Feature Methods ------------------
+    private By weatherTonightLocator() {
+        return getTabByResourceId("rc-tabs-1-tab-2");
+    }
+
+    private By horoscopeDailyTab() {
+        return getTabByResourceId("rc-tabs-0-tab-1");
+    }
+
+    private By horoscopeMonthlyTab() {
+        return getTabByResourceId("rc-tabs-0-tab-2");
+    }
+
+    private By horoscopeYearlyTab() {
+        return getTabByResourceId("rc-tabs-0-tab-3");
+    }
+
+    private By getTabByResourceId(String resourceId) {
+        return By.xpath(String.format("//android.view.View[@resource-id='%s']", resourceId));
+    }
 
     public void openNepaliNews() {
         logger.info("Opening Nepali News");
@@ -92,9 +105,7 @@ public class UtilitiesPage {
             openUtility(eplLiveScoreLocator, "EPL Live Score");
             sleep(18000);
             takeScreenshot("After_Click_EPL");
-
             captureLog("EPL_Logcat_Output");
-
         } catch (Exception e) {
             logger.error("Exception during EPL Live Score: {}", e.getMessage(), e);
             takeScreenshot("EPL_Live_Score_Exception");
@@ -109,8 +120,8 @@ public class UtilitiesPage {
         try {
             clickElementWithSwipe(weatherLocator, "Weather");
             sleep(8000);
-            clickElement(weatherTodayLocator, "Weather Today");
-            clickElement(weatherTonightLocator, "Weather Tonight");
+            clickElement(weatherTodayLocator(), "Weather Today");
+            clickElement(weatherTonightLocator(), "Weather Tonight");
         } catch (Exception e) {
             logger.error("Failed in openWeather: {}", e.getMessage(), e);
             takeScreenshot("WeatherError");
@@ -125,10 +136,9 @@ public class UtilitiesPage {
         try {
             clickElementWithSwipe(horoscopeLocator, "Horoscope");
             sleep(3000);
-            clickElement(horoscopeDailyTab, "Horoscope Daily");
-            clickElement(horoscopeMonthlyTab, "Horoscope Monthly");
-            clickElement(horoscopeYearlyTab, "Horoscope Yearly");
-
+            clickElement(horoscopeDailyTab(), "Horoscope Daily");
+            clickElement(horoscopeMonthlyTab(), "Horoscope Monthly");
+            clickElement(horoscopeYearlyTab(), "Horoscope Yearly");
         } catch (Exception e) {
             logger.error("Failed in openHoroscope: {}", e.getMessage(), e);
             takeScreenshot("HoroscopeError");
@@ -137,8 +147,6 @@ public class UtilitiesPage {
             goBack();
         }
     }
-
-    // ------------------ Helper Methods ------------------
 
     private void openUtility(By locator, String name) {
         try {
@@ -258,3 +266,5 @@ public class UtilitiesPage {
         }
     }
 }
+
+

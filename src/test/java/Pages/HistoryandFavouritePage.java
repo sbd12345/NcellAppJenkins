@@ -13,15 +13,17 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 public class HistoryandFavouritePage {
+
     private AndroidDriver<MobileElement> driver;
     private String screenshotPath = System.getProperty("user.dir") + "/screenshots/";
 
-    private By crossIconLocator = By.xpath("//android.widget.TextView[@text='']");
-    private By historyLocator = By.xpath("//android.view.ViewGroup[@content-desc=\"HISTORY \"]/android.view.ViewGroup");
-    private By favouriteLocator = By.xpath("//android.view.ViewGroup[@content-desc=\"FAVOURITES \"]/android.view.ViewGroup");
-
     public HistoryandFavouritePage(AndroidDriver<MobileElement> driver) {
         this.driver = driver;
+    }
+
+
+    private By tabByContentDesc(String tabName) {
+        return By.xpath("//android.view.ViewGroup[@content-desc='" + tabName + " ']/android.view.ViewGroup");
     }
 
     private MobileElement waitForElement(By locator, int timeoutInSeconds) {
@@ -41,21 +43,9 @@ public class HistoryandFavouritePage {
         }
     }
 
-    public void closeBanner() {
-        try {
-            MobileElement crossIcon = waitForElement(crossIconLocator, 55);
-            crossIcon.click();
-            System.out.println("closeBanner(): Banner closed successfully.");
-        } catch (Exception e) {
-            System.out.println("closeBanner(): Failed to close banner - " + e.getMessage());
-            takeScreenshot("closeBanner_Failure");
-            throw e;
-        }
-    }
-
     public void History() {
         try {
-            MobileElement history = waitForElement(historyLocator, 15);
+            MobileElement history = waitForElement(tabByContentDesc("HISTORY"), 15);
             history.click();
             System.out.println("History(): Clicked on History tab.");
         } catch (Exception e) {
@@ -67,7 +57,7 @@ public class HistoryandFavouritePage {
 
     public void Favourite() {
         try {
-            MobileElement favourite = waitForElement(favouriteLocator, 15);
+            MobileElement favourite = waitForElement(tabByContentDesc("FAVOURITES"), 15);
             favourite.click();
             System.out.println("Favourite(): Clicked on Favourite tab.");
         } catch (Exception e) {
@@ -76,5 +66,20 @@ public class HistoryandFavouritePage {
             throw e;
         }
     }
-}
 
+    /* 
+    private By crossIconLocator = By.xpath("//android.widget.TextView[@text='']");
+
+    public void closeBanner() {
+        try {
+            MobileElement crossIcon = waitForElement(crossIconLocator, 55);
+            crossIcon.click();
+            System.out.println("closeBanner(): Banner closed successfully.");
+        } catch (Exception e) {
+            System.out.println("closeBanner(): Failed to close banner - " + e.getMessage());
+            takeScreenshot("closeBanner_Failure");
+            throw e;
+        }
+    }
+    */
+}

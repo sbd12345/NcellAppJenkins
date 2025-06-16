@@ -28,60 +28,102 @@ import java.time.format.DateTimeFormatter;
 public class PartneredServicePages {
 
     private static final Logger logger = LogManager.getLogger(PartneredServicePages.class);
-
     private AndroidDriver<MobileElement> driver;
 
     public PartneredServicePages(AndroidDriver<MobileElement> driver) {
         this.driver = driver;
     }
 
-    // --- Locators ---
-    private final By hungamaLocator = MobileBy.AccessibilityId("Hungama");
-    private final By BuyPlanLocator = MobileBy.xpath("//android.view.View[@resource-id=\"plan_218\"]");
-    private final By numberLocator = MobileBy.id("consentform");
-    private final By submitLocator = MobileBy.id("mySubmit");
-    private final By unlimitedContentsLocator = MobileBy.AccessibilityId("Unlimited Contents");
-    private final By planLocator = MobileBy.AccessibilityId("Subscribe Now SMS Guru 6 months @648 NPR");
-    private final By meroSchoolLocator = MobileBy.AccessibilityId("Mero School");
-    private final By courseLocator = MobileBy.AccessibilityId("216");
+  
+    private By getByContentDesc(String contentDesc) {
+        return MobileBy.xpath("//*[@content-desc='" + contentDesc + "']");
+    }
 
-    // --- Public Methods ---
+    private By getByResourceId(String resourceId) {
+        return MobileBy.xpath("//*[@resource-id='" + resourceId + "']");
+    }
+
+    private final By hungamaLocator = getByContentDesc("Hungama");
+    private final By buyPlanLocator = getByResourceId("plan_218");
+    private final By numberLocator = getByResourceId("consentform");
+    private final By submitLocator = getByResourceId("mySubmit");
+    private final By unlimitedContentsLocator = getByContentDesc("Unlimited Contents");
+    private final By planLocator = getByContentDesc("Subscribe Now SMS Guru 6 months @648 NPR");
+    private final By meroSchoolLocator = getByContentDesc("Mero School");
+    private final By courseLocator = getByContentDesc("216");
+    private final By homePageBackButtonLocator = MobileBy.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.view.ViewGroup");
+
+
     public void openHungama() {
         logger.info("Opening Hungama service...");
         clickPartnerService(hungamaLocator, "Hungama");
 
+        WebDriverWait wait = new WebDriverWait(driver, 30);
+
         try {
             Thread.sleep(3000);
-            WebDriverWait wait = new WebDriverWait(driver, 30);
-            MobileElement buyPlanElement = (MobileElement) wait.until(ExpectedConditions.presenceOfElementLocated(BuyPlanLocator));
-            if (buyPlanElement.isDisplayed()) {
-                logger.info("Buy Plan found for Hungama, clicking Buy Plan.");
-                buyPlanElement.click();
-                Thread.sleep(5000);
+
+            try {
+                MobileElement buyPlanElement = (MobileElement) wait.until(ExpectedConditions.presenceOfElementLocated(buyPlanLocator));
+                if (buyPlanElement.isDisplayed()) {
+                    logger.info("Buy Plan found for Hungama, clicking Buy Plan.");
+                    buyPlanElement.click();
+                    Thread.sleep(5000);
+                }
+            } catch (Exception e) {
+                logger.warn("Buy Plan not found, continuing to number entry...");
             }
-            MobileElement numberElement = (MobileElement) wait.until(ExpectedConditions.presenceOfElementLocated(numberLocator));
-            if (numberElement.isDisplayed()) {
-                String number = ConfigReader.getProperty("number");
-                logger.info("Entering number: {}", number);
-                numberElement.sendKeys(number);
+
+            try {
+                MobileElement numberElement = (MobileElement) wait.until(ExpectedConditions.presenceOfElementLocated(numberLocator));
+                if (numberElement.isDisplayed()) {
+                    String number = ConfigReader.getProperty("number");
+                    logger.info("Entering number: {}", number);
+                    numberElement.sendKeys(number);
+                } else {
+                    throw new Exception("Number field not visible.");
+                }
+            } catch (Exception e) {
+                logger.error("Error in number input field.", e);
+                takeScreenshot("Hungama_NumberField_Error");
+                Assert.fail("Hungama: Number input failed.");
             }
-            MobileElement submitElement = (MobileElement) wait.until(ExpectedConditions.presenceOfElementLocated(submitLocator));
-            if (submitElement.isDisplayed()) {
-                logger.info("Clicking submit button.");
-                submitElement.click();
+
+            try {
+                MobileElement submitElement = (MobileElement) wait.until(ExpectedConditions.presenceOfElementLocated(submitLocator));
+                if (submitElement.isDisplayed()) {
+                    logger.info("Clicking submit button.");
+                    submitElement.click();
+                } else {
+                    throw new Exception("Submit button not visible.");
+                }
+            } catch (Exception e) {
+                logger.error("Error in submit button.", e);
+                takeScreenshot("Hungama_Submit_Error");
+                Assert.fail("Hungama: Submit failed.");
             }
+
         } catch (Exception e) {
-            logger.error("Buy Plan not found or clickable for Hungama.", e);
-            takeScreenshot("Hungama_BuyPlan_Error");
+            logger.error("Unexpected exception in Hungama flow.", e);
+            takeScreenshot("Hungama_Unexpected_Exception");
+            Assert.fail("Hungama: Unexpected error.");
         }
 
-        driver.navigate().back();
-        logger.info("Navigated back after Hungama.");
+        try {
+            MobileElement abElement = (MobileElement) wait.until(ExpectedConditions.presenceOfElementLocated(homePageBackButtonLocator));
+            abElement.click();
+            logger.info("Navigated back after Hungama.");
+        } catch (Exception e) {
+            logger.error("Failed to navigate back from Hungama.", e);
+            takeScreenshot("Hungama_Back_Error");
+            Assert.fail("Hungama: Back button click failed.");
+        }
     }
 
     public void openUnlimitedContents() {
         logger.info("Opening Unlimited Contents service...");
         clickPartnerService(unlimitedContentsLocator, "Unlimited Contents");
+
         try {
             Thread.sleep(3000);
             WebDriverWait wait = new WebDriverWait(driver, 30);
@@ -90,18 +132,19 @@ public class PartneredServicePages {
                 logger.info("Buy Plan found for Unlimited Contents, clicking it.");
                 buyPlanElement.click();
                 Thread.sleep(5000);
+                MobileElement abElement = (MobileElement) wait.until(ExpectedConditions.presenceOfElementLocated(homePageBackButtonLocator));
+                abElement.click();
             }
         } catch (Exception e) {
             logger.error("Buy Plan not found or clickable for Unlimited Contents.", e);
             takeScreenshot("UnlimitedContents_BuyPlan_Error");
         }
-        driver.navigate().back();
-        logger.info("Navigated back after Unlimited Contents.");
     }
 
     public void openMeroSchool() {
         logger.info("Opening Mero School service...");
         clickPartnerService(meroSchoolLocator, "Mero School");
+
         try {
             Thread.sleep(3000);
             WebDriverWait wait = new WebDriverWait(driver, 30);
@@ -109,14 +152,14 @@ public class PartneredServicePages {
             if (buyPlanElement.isDisplayed()) {
                 logger.info("Buy Plan found for Mero School, clicking it.");
                 buyPlanElement.click();
-                Thread.sleep(5000);
+                Thread.sleep(10000);
+                MobileElement abElement = (MobileElement) wait.until(ExpectedConditions.presenceOfElementLocated(homePageBackButtonLocator));
+                abElement.click();
             }
         } catch (Exception e) {
             logger.error("Buy Plan not found or clickable for Mero School.", e);
             takeScreenshot("MeroSchool_BuyPlan_Error");
         }
-        driver.navigate().back();
-        logger.info("Navigated back after Mero School.");
     }
 
     private void clickPartnerService(By locator, String serviceName) {
@@ -187,3 +230,5 @@ public class PartneredServicePages {
         }
     }
 }
+
+

@@ -3,16 +3,22 @@
 <suite name="Failed suite [Default suite]" guice-stage="DEVELOPMENT">
   <test thread-count="5" name="Default test(failed)">
     <classes>
-      <class name="Test.RecommendedRenewelPackTest">
+      <class name="Test.buyvoicepackTest">
         <methods>
-          <include name="sendAutomationReports"/>
+          <include name="testThreeToSevenDay"/>
+          <include name="testIndiaIldDays"/>
+          <include name="testTwentyEightDays"/>
+          <include name="testEightyFourDays"/>
+          <include name="testAllProduct"/>
           <include name="closeReport"/>
-          <include name="initializeReport"/>
-          <include name="recommendedRenewalPackTest"/>
+          <include name="testSpecialOffer"/>
+          <include name="testHourlyOneDay"/>
           <include name="tearDown"/>
+          <include name="initializeReport"/>
+          <include name="setUpPage"/>
           <include name="setup"/>
         </methods>
-      </class> <!-- Test.RecommendedRenewelPackTest -->
+      </class> <!-- Test.buyvoicepackTest -->
     </classes>
   </test> <!-- Default test(failed) -->
 </suite> <!-- Failed suite [Default suite] -->

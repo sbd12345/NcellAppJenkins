@@ -35,10 +35,18 @@ public class NcellPurpleLeaguePage {
         this.wait = new WebDriverWait(driver, 60);
     }
 
-    private final By ncellPurpleLeagueLocator = MobileBy.AccessibilityId("Ncell Purple League");
-    private final By scoreboardLocator = MobileBy.xpath("//android.widget.TextView[@text='SCOREBOARD']");
-    private final By top10Locator = MobileBy.AccessibilityId("Top 10");
-    private final By rulesAndPrizeLocator = MobileBy.AccessibilityId("Rules & Prize");
+    private By byAccessibilityId(String id) {
+        return MobileBy.xpath("//*[@content-desc='" + id + "']");
+    }
+
+    private By byText(String text) {
+        return MobileBy.xpath("//*[@text='" + text + "']");
+    }
+
+    private final By ncellPurpleLeagueLocator = byAccessibilityId("Ncell Purple League");
+    private final By scoreboardLocator = byText("SCOREBOARD");
+    private final By top10Locator = byAccessibilityId("Top 10");
+    private final By rulesAndPrizeLocator = byAccessibilityId("Rules & Prize");
 
     public void NcellPurpleLeague() {
         int maxSwipes = 3;
@@ -84,7 +92,7 @@ public class NcellPurpleLeaguePage {
             }
         } catch (Exception e) {
             logger.error("Error interacting with '{}': {}", name, e.getMessage());
-            takeScreenshot("Error_" + name);
+            takeScreenshot("Error_" + name.replace(" ", "_"));
         }
     }
 

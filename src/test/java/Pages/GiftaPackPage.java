@@ -14,7 +14,6 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -36,19 +35,40 @@ public class GiftaPackPage {
         this.wait = new WebDriverWait(driver, 40);
     }
 
-    private final By giftLocator = MobileBy.AccessibilityId("Gift a Pack");
-    private final By historyLocator = MobileBy.AccessibilityId("History");
-    private final By receiveLocator = MobileBy.AccessibilityId("Received");
-    private final By activeLocator = MobileBy.AccessibilityId("Active");
-    private final By downArrowLocator = MobileBy.xpath("//android.view.ViewGroup[@resource-id=\"card-container\"]");
-    private final By packlocator = MobileBy.xpath("//android.view.ViewGroup[@content-desc=\"RS 279 All Nepal, Gift 555 Minute All Nepal call valid for 28 days., Can be sent to all numbers, Rs. 279\"]/android.widget.ImageView[1]");
-    private final By sendLocator = MobileBy.xpath("//android.widget.Button[@content-desc=\"Send\"]/android.view.ViewGroup/android.view.View");
+    private final By homePageBackButtonLocator = MobileBy.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.view.ViewGroup");
 
-    // --- Public flows ---
+    private By getGiftLocator() {
+        return MobileBy.AccessibilityId("Gift a Pack");
+    }
+
+    private By getHistoryLocator() {
+        return MobileBy.AccessibilityId("History");
+    }
+
+    private By getReceiveLocator() {
+        return MobileBy.AccessibilityId("Received");
+    }
+
+    private By getActiveLocator() {
+        return MobileBy.AccessibilityId("Active");
+    }
+
+    private By getDownArrowLocator() {
+        return By.xpath("//android.view.ViewGroup[@resource-id='card-container']");
+    }
+
+    private By getPackLocator(String packName) {
+
+        return By.xpath("//android.view.ViewGroup[contains(@content-desc, '" + packName + "')]/android.widget.ImageView[1]");
+    }
+
+    private By getSendLocator() {
+        return By.xpath("//android.widget.Button[@content-desc='Send']/android.view.ViewGroup/android.view.View");
+    }
 
     public void gift() {
         try {
-            clickElementWithSwipe(downArrowLocator, "Down Arrow");
+            clickElementWithSwipe(getDownArrowLocator(), "Down Arrow");
         } catch (Exception e) {
             logger.error("Error in gift(): {}", e.getMessage(), e);
             takeScreenshot("Gift_Failure");
@@ -58,12 +78,13 @@ public class GiftaPackPage {
 
     public void g() {
         try {
-            clickElement(giftLocator, "Gift a Pack");
-            clickElement(historyLocator, "History");
-            clickElement(receiveLocator, "Received");
-            clickElement(activeLocator, "Active");
-            clickElement(packlocator, "Pack");
-            clickElement(sendLocator, "Send");
+            clickElement(getGiftLocator(), "Gift a Pack");
+            clickElement(getHistoryLocator(), "History");
+            clickElement(getReceiveLocator(), "Received");
+            clickElement(getActiveLocator(), "Active");
+            clickElement(getPackLocator("Gift"), "Pack");
+            clickElement(getSendLocator(), "Send");
+            clickElement(homePageBackButtonLocator, "Home Page Back Button/Icon");
         } catch (Exception e) {
             logger.error("Error in g() flow: {}", e.getMessage(), e);
             takeScreenshot("G_Flow_Failure");
@@ -132,7 +153,7 @@ public class GiftaPackPage {
 
     private void waitAfterSwipe() {
         try {
-            Thread.sleep(20000);
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             logger.warn("Interrupted during swipe wait", e);
             Thread.currentThread().interrupt();

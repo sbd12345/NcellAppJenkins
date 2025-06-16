@@ -36,13 +36,12 @@ public class HDVoicePage {
         this.wait = new WebDriverWait(driver, 45);
     }
 
-    // --- Locators ---
     private final By hdvoiceLocator = MobileBy.AccessibilityId("HD Voice");
     private final By downArrowLocator = MobileBy.xpath("//android.view.ViewGroup[@resource-id=\"card-container\"]");
     private final By elegibilityLocator = MobileBy.xpath("//android.widget.Button[@content-desc=\"Check Eligibility\"]/android.view.ViewGroup/android.view.View");
     private final By checkcapabledeviceLocator = MobileBy.xpath("//android.widget.Button[@content-desc=\"Check the Capable Devices\"]/android.view.ViewGroup/android.view.View");
+    private final By homePageBackButtonLocator = MobileBy.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.view.ViewGroup");
 
-    // --- Public flows ---
 
     public void openhdvoice() {
         try {
@@ -59,6 +58,8 @@ public class HDVoicePage {
     public void hdvoice() {
         try {
             clickElement(checkcapabledeviceLocator, "checkcapabledevice");
+            clickElement(homePageBackButtonLocator, "Home Page Back Button/Icon");
+            clickElement(homePageBackButtonLocator, "Home Page Back Button/Icon");
         } catch (Exception e) {
             logger.error("hdvoice() failed: {}", e.getMessage(), e);
             takeScreenshot("hdvoice_Failure");
@@ -66,7 +67,6 @@ public class HDVoicePage {
         }
     }
 
-    // --- Core utilities ---
 
     private void clickElementWithSwipe(By locator, String name) {
         int maxSwipes = 5;
@@ -117,7 +117,7 @@ public class HDVoicePage {
         int width = driver.manage().window().getSize().width;
         int startX = width / 2;
         int startY = (int) (height * 0.8);
-        int endY = (int) (height * 0.3);
+        int endY = (int) (height * 0.1);
 
         logger.debug("Performing swipe up gesture.");
         new TouchAction<>(driver)

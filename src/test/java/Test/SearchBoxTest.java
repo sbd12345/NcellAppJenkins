@@ -13,7 +13,7 @@ public class SearchBoxTest extends BaseTest {
     private static final Logger logger = LogManager.getLogger(SearchBoxTest.class);
 
     @Test
-    public void searchBoxTest() {
+    public void searchBoxTest() throws Exception {
         logger.info("Test 'searchBoxTest' started.");
         try {
             SearchBoxPage searchPage = new SearchBoxPage(driver);

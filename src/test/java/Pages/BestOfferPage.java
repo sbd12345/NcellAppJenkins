@@ -38,18 +38,32 @@ public class BestOfferPage {
         this.wait = new WebDriverWait(driver, 80);
     }
 
-    private final By bestOfferCardLocator = MobileBy.AccessibilityId("Best Offer");
-    private final By buyPackLocator = MobileBy.xpath("(//android.view.ViewGroup[@content-desc=\"BUY\"])[1]/android.view.ViewGroup");
-    private final By paymentMethodLocator = MobileBy.xpath("//android.view.ViewGroup[@content-desc=\"Pay By Balance\"]");
-    private final By confirmLocator = MobileBy.xpath("//android.view.ViewGroup[@content-desc=\"Confirm\"]");
-    private final By noLocator = MobileBy.AccessibilityId("NO");
-    private final By detailLocator = MobileBy.xpath("(//android.view.ViewGroup[@content-desc=\"Details\"])[1]");
-    private final By buyPackLocator1 = MobileBy.xpath("//android.widget.Button[@content-desc=\"BUY\"]/android.view.ViewGroup/android.view.View");
-    private final By back = MobileBy.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.view.ViewGroup/android.widget.ImageView");
+  
+    private By getByContentDesc(String contentDesc) {
+        return By.xpath("//*[@content-desc='" + contentDesc + "']");
+    }
+
+    private By getBuyPackLocatorByIndex(int index) {
+        return By.xpath("(//*[@content-desc='BUY'])[" + index + "]/android.view.ViewGroup");
+    }
+
+    private By getDetailLocatorByIndex(int index) {
+        return By.xpath("(//*[@content-desc='Details'])[" + index + "]");
+    }
+
+    private By getInnerBuyButtonXPath() {
+        return By.xpath("//android.widget.Button[@content-desc='BUY']/android.view.ViewGroup/android.view.View");
+    }
+
+    private By getHomePageBackButtonLocator() {
+        return By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.view.ViewGroup");
+       
+    }
+
     public void openBestOffer() {
         try {
-        	Thread.sleep(10000);
-        	clickElementWithSwipe(bestOfferCardLocator, "Best Offer Card");
+            Thread.sleep(10000);
+            clickElementWithSwipe(getByContentDesc("Best Offer"), "Best Offer Card");
         } catch (Exception e) {
             logger.error("Failed during Best Offer flow: {}", e.getMessage());
             takeScreenshot("openBestOffer_error");
@@ -59,13 +73,13 @@ public class BestOfferPage {
 
     public void bestoffer() {
         try {
-            clickElement(buyPackLocator, "Buy Pack");
-            clickElement(paymentMethodLocator, "Pay By Balance");
-            clickElement(confirmLocator, "Confirm Payment");
-            clickElement(noLocator, "No Button to Close Confirmation");
-            clickElement(detailLocator, "Details");
-            clickElement(buyPackLocator1, "Buy Button in Details");
-            clickElement(back, "Back");
+            Thread.sleep(20000);
+            clickElement(getBuyPackLocatorByIndex(1), "Buy Pack");
+            clickElement(getByContentDesc("Pay By Balance"), "Pay By Balance");
+            clickElement(getByContentDesc("Confirm"), "Confirm Payment");
+            clickElement(getByContentDesc("NO"), "No Button to Close Confirmation");
+            clickElement(getDetailLocatorByIndex(1), "Details");
+            clickElement(getInnerBuyButtonXPath(), "Buy Button in Details");
             reuse();
         } catch (Exception e) {
             logger.error("Error in bestoffer flow: {}", e.getMessage());
@@ -76,9 +90,10 @@ public class BestOfferPage {
 
     public void reuse() {
         try {
-            clickElement(paymentMethodLocator, "Pay By Balance");
-            clickElement(confirmLocator, "Confirm Payment");
-            clickElement(noLocator, "No Button to Close Confirmation");
+            clickElement(getByContentDesc("Pay By Balance"), "Pay By Balance");
+            clickElement(getByContentDesc("Confirm"), "Confirm Payment");
+            clickElement(getByContentDesc("NO"), "No Button to Close Confirmation");
+            clickElement(getHomePageBackButtonLocator(), "Home Page Back Button/Icon");
         } catch (Exception e) {
             logger.error("Error in reuse flow: {}", e.getMessage());
             takeScreenshot("reuse_error");
@@ -86,101 +101,52 @@ public class BestOfferPage {
         }
     }
 
-    // --- Core utilities ---
-
-    private void clickElementWithSwipe(By locator, String name) {
-        int maxSwipes = 5;
-        boolean found = false;
-
-        for (int i = 0; i < maxSwipes; i++) {
-            try {
-                List<MobileElement> elements = driver.findElements(locator);
-                if (!elements.isEmpty()) {
-                    MobileElement element = elements.get(0);
-                    if (element.isDisplayed()) {
-                        wait.until(ExpectedConditions.elementToBeClickable(element)).click();
-                        logger.info("Clicked on {}", name);
-                        found = true;
-                        break;
-                    }
-                }
-                swipeUp();
-                waitAfterSwipe();
-            } catch (Exception e) {
-                logger.warn("Swipe {} for {} failed: {}", (i + 1), name, e.getMessage());
-            }
-        }
-
-        if (!found) {
-            logger.error("{} not found after {} swipes.", name, maxSwipes);
-            takeScreenshot(name.replaceAll(" ", "_") + "_not_found");
-            Assert.fail(name + " not found after " + maxSwipes + " swipes.");
-        }
+    private void clickElement(By locator, String elementName) {
+        wait.until(ExpectedConditions.visibilityOfElementLocated(locator)).click();
+        logger.info("Clicked on: {}", elementName);
     }
 
-    private void clickElement(By locator, String name) {
-        try {
-            MobileElement element = (MobileElement) wait.until(ExpectedConditions.elementToBeClickable(locator));
-            element.click();
-            logger.info("Clicked on: {}", name);
-        } catch (Exception e) {
-            logger.error("Failed to click on {}: {}", name, e.getMessage());
-            takeScreenshot(name.replaceAll(" ", "_") + "_click_fail");
-            Assert.fail("Failed to click on " + name + ": " + e.getMessage());
+    private void clickElementWithSwipe(By locator, String elementName) {
+        int maxSwipe = 5;
+        while (maxSwipe-- > 0) {
+            try {
+                MobileElement element = (MobileElement) wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+                element.click();
+                logger.info("Clicked on: {}", elementName);
+                return;
+            } catch (Exception e) {
+                swipeUp();
+            }
         }
+        throw new RuntimeException("Element not found after swiping: " + elementName);
     }
 
     private void swipeUp() {
         int height = driver.manage().window().getSize().height;
         int width = driver.manage().window().getSize().width;
-        int startX = width / 2;
+
         int startY = (int) (height * 0.8);
-        int endY = (int) (height * 0.3);
+        int endY = (int) (height * 0.2);
+        int startX = width / 2;
 
         new TouchAction<>(driver)
                 .press(PointOption.point(startX, startY))
-                .waitAction(WaitOptions.waitOptions(Duration.ofMillis(300)))
+                .waitAction(WaitOptions.waitOptions(Duration.ofMillis(1000)))
                 .moveTo(PointOption.point(startX, endY))
                 .release()
                 .perform();
-
-        logger.info("Performed swipe up");
     }
 
-    private void waitAfterSwipe() {
+    private void takeScreenshot(String fileName) {
         try {
-            Thread.sleep(8000);  
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            logger.warn("Wait after swipe interrupted");
-        }
-    }
-
-    public void takeScreenshot(String screenshotName) {
-        try {
-            TakesScreenshot screenshot = (TakesScreenshot) driver;
-            File srcFile = screenshot.getScreenshotAs(OutputType.FILE);
-
+            File srcFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-            String destinationPath = "screenshots/" + screenshotName + "_" + timestamp + ".png";
-
-            File screenshotDirectory = new File("screenshots");
-            if (!screenshotDirectory.exists()) {
-                boolean dirCreated = screenshotDirectory.mkdirs();
-                if (dirCreated) {
-                    logger.info("Screenshots directory created.");
-                } else {
-                    logger.warn("Failed to create screenshots directory.");
-                }
-            }
-
-            Files.copy(srcFile.toPath(), Paths.get(destinationPath));
-            logger.info("Screenshot saved at: {}", destinationPath);
+            String path = "screenshots/" + fileName + "_" + timestamp + ".png";
+            Files.createDirectories(Paths.get("screenshots"));
+            Files.copy(srcFile.toPath(), Paths.get(path));
+            logger.info("Screenshot saved: {}", path);
         } catch (IOException e) {
             logger.error("Failed to save screenshot: {}", e.getMessage());
-        } catch (Exception e) {
-            logger.error("Unexpected error during screenshot capture: {}", e.getMessage());
         }
     }
 }
-

@@ -7,56 +7,35 @@ import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.PointOption;
 import org.openqa.selenium.By;
-import org.openqa.selenium.OutputType;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.time.Duration;
 
 public class PlaygamePage {
 
     private AndroidDriver<MobileElement> driver;
-    private String screenshotPath;
 
     public PlaygamePage(AndroidDriver<MobileElement> driver) {
         this.driver = driver;
-        this.screenshotPath = System.getProperty("user.dir") + "/screenshots/";
     }
 
-    private final By policeGameTile = MobileBy.AccessibilityId("Police");
-    private final By changaChaitTile = MobileBy.AccessibilityId("Changa Chait");
-    private final By timberGuyTile = MobileBy.AccessibilityId("Timber Guy");
-    private final By stickyGooTile = MobileBy.AccessibilityId("Sticky Goo");
-    private final By ludoWithFriendsTile = MobileBy.AccessibilityId("Ludo with Friends");
-    private final By carromHeroTile = MobileBy.AccessibilityId("Carrom Hero");
-    private final By candyFiestaTile = MobileBy.AccessibilityId("Candy Fiesta");
+    private final By policeGameTile = By.xpath("//*[contains(@content-desc,'Police')]");
+    private final By changaChaitTile = By.xpath("//*[contains(@content-desc,'Changa Chait')]");
+    private final By timberGuyTile = By.xpath("//*[contains(@content-desc,'Timber Guy')]");
+    private final By stickyGooTile = By.xpath("//*[contains(@content-desc,'Sticky Goo')]");
+    private final By ludoWithFriendsTile = By.xpath("//*[contains(@content-desc,'Ludo with Friends')]");
+    private final By carromHeroTile = By.xpath("//*[contains(@content-desc,'Carrom Hero')]");
+    private final By candyFiestaTile = By.xpath("//*[contains(@content-desc,'Candy Fiesta')]");
+    private final By homePageBackButtonLocator = By.xpath("//android.view.ViewGroup[2]/android.view.ViewGroup");
 
     public void openPoliceGame() {
-        System.out.println("Opening Police game...");
-        clickGame(policeGameTile, "Police");
-        try {
-            Thread.sleep(20000);
-        } catch (InterruptedException e) {
-            System.out.println("Interrupted while waiting in Police game: " + e.getMessage());
-        }
-        driver.navigate().back();
-        System.out.println("Navigated back from Police game.");
+        openGame(policeGameTile, "Police", true);
     }
 
     public void openChangaChaitGame() {
-        System.out.println("Opening Changa Chait game...");
-        clickGame(changaChaitTile, "Changa Chait");
-        try {
-            Thread.sleep(20000);
-        } catch (InterruptedException e) {
-            System.out.println("Interrupted while waiting in Changa Chait game: " + e.getMessage());
-        }
-        driver.navigate().back();
-        System.out.println("Navigated back from Changa Chait game.");
+        openGame(changaChaitTile, "Changa Chait", true);
     }
 
     public void openTimberGuyGame() {
@@ -64,89 +43,60 @@ public class PlaygamePage {
         clickGame(timberGuyTile, "Timber Guy");
         try {
             WebDriverWait wait = new WebDriverWait(driver, 40);
-            MobileElement gameElement = (MobileElement) wait.until(ExpectedConditions.presenceOfElementLocated(MobileBy.AccessibilityId("TimberGuy")));
+            MobileElement gameElement = (MobileElement) wait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.xpath("//*[contains(@content-desc,'Timber Guy')]")));
             if (gameElement.isDisplayed()) {
-                System.out.println("Timber Guy game element is displayed, clicking...");
                 gameElement.click();
-                Thread.sleep(50000);
+                System.out.println("Clicked Timber Guy in-game element.");
+                sleep(50000);
             }
         } catch (Exception e) {
             System.out.println("Error in Timber Guy Game: " + e.getMessage());
-            takeScreenshot("TimberGuyGame_Error");
             Assert.fail("Timber Guy game failed: " + e.getMessage());
         } finally {
-            driver.navigate().back();
-            System.out.println("Navigated back from Timber Guy game.");
+            clickElement(homePageBackButtonLocator, "Back from Timber Guy");
         }
     }
 
     public void openStickyGooGame() {
-        System.out.println("Opening Sticky Goo game...");
-        clickGame(stickyGooTile, "Sticky Goo");
-        try {
-            Thread.sleep(20000);
-        } catch (InterruptedException e) {
-            System.out.println("Interrupted while waiting in Sticky Goo game: " + e.getMessage());
-        }
-        driver.navigate().back();
-        System.out.println("Navigated back from Sticky Goo game.");
+        openGame(stickyGooTile, "Sticky Goo", true);
     }
 
     public void openLudoWithFriendsGame() {
-        System.out.println("Opening Ludo with Friends game...");
-        clickGame(ludoWithFriendsTile, "Ludo with Friends");
-        try {
-            Thread.sleep(20000);
-            // Simulate failure and capture screenshot
-            takeScreenshot("LudoWithFriendsGame_Error");
-            Assert.fail("Ludo with Friends game failed to load correctly. Screenshot captured.");
-        } catch (Exception e) {
-            System.out.println("Error in Ludo with Friends Game: " + e.getMessage());
-        } finally {
-            driver.navigate().back();
-            System.out.println("Navigated back from Ludo with Friends game.");
-        }
+        openGame(ludoWithFriendsTile, "Ludo with Friends", true);
     }
 
     public void openCarromHeroGame() {
-        System.out.println("Opening Carrom Hero game...");
-        clickGame(carromHeroTile, "Carrom Hero");
-        try {
-            Thread.sleep(20000);
-            takeScreenshot("CarromHeroGame_Error");
-            Assert.fail("Carrom Hero game failed to load correctly. Screenshot captured.");
-        } catch (Exception e) {
-            System.out.println("Error in Carrom Hero Game: " + e.getMessage());
-        } finally {
-            driver.navigate().back();
-            System.out.println("Navigated back from Carrom Hero game.");
-        }
+        openGame(carromHeroTile, "Carrom Hero", true);
     }
 
     public void openCandyFiestaGame() {
-        System.out.println("Opening Candy Fiesta game...");
-        clickGame(candyFiestaTile, "Candy Fiesta");
+        openGame(candyFiestaTile, "Candy Fiesta", true);
+    }
+
+    private void openGame(By locator, String gameName, boolean shouldFail) {
+        System.out.println("Opening " + gameName + " game...");
+        clickGame(locator, gameName);
         try {
-            Thread.sleep(20000);
-            takeScreenshot("CandyFiestaGame_Error");
-            Assert.fail("Candy Fiesta game failed to load correctly. Screenshot captured.");
+            sleep(20000);
+            if (shouldFail) {
+                Assert.fail(gameName + " game failed to load correctly.");
+            }
         } catch (Exception e) {
-            System.out.println("Error in Candy Fiesta Game: " + e.getMessage());
+            System.out.println("Error in " + gameName + ": " + e.getMessage());
         } finally {
-            driver.navigate().back();
-            System.out.println("Navigated back from Candy Fiesta game.");
+            clickElement(homePageBackButtonLocator, "Back from " + gameName);
         }
     }
 
     private void clickGame(By locator, String gameName) {
         int maxSwipes = 7;
         boolean found = false;
-
         System.out.println("Attempting to find and click game: " + gameName);
 
         for (int i = 0; i < maxSwipes; i++) {
             try {
-                WebDriverWait wait = new WebDriverWait(driver, 30);
+                WebDriverWait wait = new WebDriverWait(driver, 10);
                 MobileElement element = (MobileElement) wait.until(ExpectedConditions.presenceOfElementLocated(locator));
                 if (element.isDisplayed()) {
                     element.click();
@@ -162,9 +112,18 @@ public class PlaygamePage {
 
         if (!found) {
             String errorMsg = gameName + " not found after swiping.";
-            System.out.println(errorMsg);
-            takeScreenshot(gameName + "_NotFound");
             Assert.fail(errorMsg);
+        }
+    }
+
+    private void clickElement(By locator, String elementName) {
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, 15);
+            MobileElement element = (MobileElement) wait.until(ExpectedConditions.elementToBeClickable(locator));
+            element.click();
+            System.out.println("Clicked on: " + elementName);
+        } catch (Exception e) {
+            System.out.println("Failed to click on " + elementName + ": " + e.getMessage());
         }
     }
 
@@ -181,19 +140,15 @@ public class PlaygamePage {
                 .moveTo(PointOption.point(startX, endY))
                 .release()
                 .perform();
-
         System.out.println("Performed swipe up");
     }
 
-    private void takeScreenshot(String fileName) {
+    private void sleep(long millis) {
         try {
-            File screenshot = driver.getScreenshotAs(OutputType.FILE);
-            File destinationFile = new File(screenshotPath + fileName + ".png");
-            Files.createDirectories(destinationFile.getParentFile().toPath());
-            Files.copy(screenshot.toPath(), destinationFile.toPath());
-            System.out.println("Screenshot saved: " + destinationFile.getAbsolutePath());
-        } catch (IOException e) {
-            System.out.println("Failed to save screenshot: " + e.getMessage());
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            System.out.println("Sleep interrupted: " + e.getMessage());
         }
     }
 }
+

@@ -23,14 +23,16 @@ public class RecommendedRenewelPackPage {
     private AndroidDriver<MobileElement> driver;
     private static final Logger logger = LogManager.getLogger(RecommendedRenewelPackPage.class);
 
-    // Locators
-    private By buyPlanTextLocator = By.xpath("//android.view.ViewGroup[@content-desc='Rs 200 |Unlimited GB']");
-    private By sevenDayRenewalTabLocator = By.xpath("//android.view.ViewGroup[@content-desc='7 Day Renewal']");
-    private By cancelLocator = By.xpath("//android.widget.Button[@content-desc='Cancel']/android.view.ViewGroup");
-    private By detailsLocator = By.xpath("//android.view.ViewGroup[@content-desc='Details']");
-
     public RecommendedRenewelPackPage(AndroidDriver<MobileElement> driver) {
         this.driver = driver;
+    }
+
+    private By getViewGroupByContentDesc(String contentDesc) {
+        return By.xpath("//android.view.ViewGroup[@content-desc='" + contentDesc + "']");
+    }
+
+    private By getButtonByContentDesc(String contentDesc) {
+        return By.xpath("//android.widget.Button[@content-desc='" + contentDesc + "']/android.view.ViewGroup");
     }
 
     private MobileElement waitForElementVisibility(By locator, int timeoutInSeconds) {
@@ -44,52 +46,55 @@ public class RecommendedRenewelPackPage {
         }
     }
 
-    public void scrollToBuyPlanAndClick() {
+    public void clickBuyPlanByText(String planText) {
         try {
-            MobileElement buyPlan = waitForElementVisibility(buyPlanTextLocator, 60);
+            MobileElement buyPlan = waitForElementVisibility(getViewGroupByContentDesc(planText), 70);
             buyPlan.click();
-            logger.info("Clicked on Buy Plan");
+            logger.info("Clicked on Buy Plan with text: " + planText);
         } catch (Exception e) {
-            logger.error("Failed to click Buy Plan", e);
-            takeScreenshot("scrollToBuyPlanAndClickError");
+            logger.error("Failed to click Buy Plan with text: " + planText, e);
+            takeScreenshot("clickBuyPlanError_" + planText);
             throw e;
         }
     }
 
-    public void selectSevenDayRenewalTab() {
+    public void selectRenewalTab(String tabName) {
         try {
-            waitForElementVisibility(sevenDayRenewalTabLocator, 40).click();
-            logger.info("Selected 7 Day Renewal Tab");
+            waitForElementVisibility(getViewGroupByContentDesc(tabName), 40).click();
+            logger.info("Selected Renewal Tab: " + tabName);
         } catch (Exception e) {
-            logger.error("Failed to select 7 Day Renewal Tab", e);
-            takeScreenshot("selectSevenDayRenewalTabError");
+            logger.error("Failed to select Renewal Tab: " + tabName, e);
+            takeScreenshot("selectRenewalTabError_" + tabName);
             throw e;
         }
     }
 
-    public void clickCancel() {
+    public void clickCancelButton(String cancelText) {
         try {
-            waitForElementVisibility(cancelLocator, 10).click();
-            logger.info("Clicked Cancel button");
+            waitForElementVisibility(getButtonByContentDesc(cancelText), 10).click();
+            logger.info("Clicked Cancel button: " + cancelText);
         } catch (Exception e) {
-            logger.error("Failed to click Cancel button", e);
-            takeScreenshot("clickCancelError");
+            logger.error("Failed to click Cancel button: " + cancelText, e);
+            takeScreenshot("clickCancelError_" + cancelText);
             throw e;
         }
     }
 
-    public void clickDetails() {
+
+  public void clickDetailsAndBack(String detailsText, By backLocator) {
         try {
-            waitForElementVisibility(detailsLocator, 30).click();
-            logger.info("Clicked Details button");
+            waitForElementVisibility(getViewGroupByContentDesc(detailsText), 30).click();
+            logger.info("Clicked Details: " + detailsText);
+            waitForElementVisibility(backLocator, 30).click();
+            logger.info("Clicked Back button after Details");
         } catch (Exception e) {
-            logger.error("Failed to click Details button", e);
+            logger.error("Failed to click Details or Back", e);
             takeScreenshot("clickDetailsError");
             throw e;
         }
-    }
+    }       
 
-    // --- Screenshot utility ---
+
     public void takeScreenshot(String screenshotName) {
         TakesScreenshot screenshot = (TakesScreenshot) driver;
         File srcFile = screenshot.getScreenshotAs(OutputType.FILE);
@@ -115,5 +120,3 @@ public class RecommendedRenewelPackPage {
         }
     }
 }
-
-

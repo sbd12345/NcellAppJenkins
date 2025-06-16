@@ -30,37 +30,47 @@ public class BuyvoicepackPage {
     private final String screenshotPath;
     private static final Logger logger = LoggerFactory.getLogger(BuyvoicepackPage.class);
 
+    private long globalTimeoutSeconds = 90; 
+    private long startTime = 0;
+
     public BuyvoicepackPage(AndroidDriver<MobileElement> driver) {
         this.driver = driver;
         this.wait = new WebDriverWait(driver, 30);
         this.screenshotPath = System.getProperty("user.dir") + "/screenshots/";
     }
 
-    private final By voiceLocator = MobileBy.AccessibilityId("Buy Voice Packs");
-    private final By allProductLocator = MobileBy.AccessibilityId("All Products");
-    private final By specialOfferLocator = MobileBy.AccessibilityId("Special Offer");
-    private final By hourlyOneDayLocator = MobileBy.AccessibilityId("Hourly - 1 Day");
-    private final By threeToSevenDayLocator = MobileBy.AccessibilityId("3 - 7 Days");
-    private final By twentyEightDayLocator = MobileBy.AccessibilityId("28 Days");
-    private final By eightyFourDayLocator = MobileBy.AccessibilityId("84 Days");
-    private final By indiaIldLocator = MobileBy.AccessibilityId("India + ILD");
-    private final By renewalLocator = MobileBy.xpath("(//android.view.ViewGroup[@content-desc=\"28 Day Renewal\"])[1]");
-    private final By paymentMethodLocator = MobileBy.xpath("//android.view.ViewGroup[@content-desc=\"Pay By Balance\"]");
-    private final By confirmLocator = MobileBy.xpath("//android.view.ViewGroup[@content-desc=\"Confirm\"]");
-    private final By cancelLocator = MobileBy.xpath("//android.widget.Button[@content-desc=\"Cancel\"]/android.view.ViewGroup");
-    private final By twentyEightDayOneTimeLocator = MobileBy.xpath("(//android.view.ViewGroup[@content-desc=\"28 Day One Time\"])[1]/android.view.ViewGroup");
-    private final By buyPackLocator = MobileBy.xpath("(//android.view.ViewGroup[@content-desc=\"Buy Pack\"])[1]/android.view.ViewGroup");
-    private final By buyPackLocatorDetails = MobileBy.xpath("//android.widget.Button[@content-desc=\"Buy pack\"]/android.view.ViewGroup/android.view.View");
-    private final By noLocator = MobileBy.xpath("//android.view.ViewGroup[@content-desc=\"NO\"]/android.view.ViewGroup");
-    private final By detailLocator = MobileBy.xpath("(//android.view.ViewGroup[@content-desc=\"Details\"])[1]");
-    private final By buyPackLocatorSimple = MobileBy.xpath("//android.view.ViewGroup[@content-desc=\"Buy Pack\"]/android.view.ViewGroup");
-    private final By detailSimpleLocator = MobileBy.AccessibilityId("Details");
 
-    // --- Public flows ---
+    private final String contentDescXPathTemplate = "//*[@content-desc='%s']";
+    private final String contentDescIndexedXPathTemplate = "(//*[@content-desc='%s'])[%d]";
+
+    private final By voiceLocator = By.xpath(String.format(contentDescXPathTemplate, "Buy Voice Packs"));
+    private final By allProductLocator = By.xpath(String.format(contentDescXPathTemplate, "All Products"));
+    private final By specialOfferLocator = By.xpath(String.format(contentDescXPathTemplate, "Special Offer"));
+    private final By hourlyOneDayLocator = By.xpath(String.format(contentDescXPathTemplate, "Hourly - 1 Day"));
+    private final By threeToSevenDayLocator = By.xpath(String.format(contentDescXPathTemplate, "3 - 7 Days"));
+    private final By twentyEightDayLocator = By.xpath(String.format(contentDescXPathTemplate, "28 Days"));
+    private final By eightyFourDayLocator = By.xpath(String.format(contentDescXPathTemplate, "84 Days"));
+    private final By indiaIldLocator = By.xpath(String.format(contentDescXPathTemplate, "India + ILD"));
+    private final By renewalLocator = By.xpath(String.format(contentDescIndexedXPathTemplate, "28 Day Renewal", 1));
+    private final By paymentMethodLocator = By.xpath(String.format(contentDescXPathTemplate, "Pay By Balance"));
+    private final By confirmLocator = By.xpath(String.format(contentDescXPathTemplate, "Confirm"));
+    private final By cancelLocator = By.xpath(String.format(contentDescXPathTemplate, "Cancel") + "//android.view.ViewGroup");
+    private final By twentyEightDayOneTimeLocator = By.xpath(String.format(contentDescIndexedXPathTemplate, "28 Day One Time", 1) + "//android.view.ViewGroup");
+    private final By buyPackLocator = By.xpath(String.format(contentDescIndexedXPathTemplate, "Buy Pack", 1) + "//android.view.ViewGroup");
+    private final By buyPackLocatorDetails = By.xpath(contentDescXPathTemplate.replace("%s", "Buy pack") + "//android.view.ViewGroup/android.view.View");
+    private final By noLocator = By.xpath(contentDescXPathTemplate.replace("%s", "NO") + "//android.view.ViewGroup");
+    private final By detailLocator = By.xpath(String.format(contentDescIndexedXPathTemplate, "Details", 1));
+    private final By buyPackLocatorSimple = By.xpath(contentDescXPathTemplate.replace("%s", "Buy Pack") + "//android.view.ViewGroup");
+    private final By detailSimpleLocator = By.xpath(contentDescXPathTemplate.replace("%s", "Details"));
+    private final By nooLocator = By.xpath("//android.widget.Button[contains(@content-desc, 'Continue with One-time')]/android.view.ViewGroup/android.view.View");
+    private final By homePageBackButtonLocator = MobileBy.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.view.ViewGroup");
+
 
     public void allProductFlow() {
+        startTime = System.currentTimeMillis();
         clickElementWithSwipe(voiceLocator, "Buy Voice Packs");
         try {
+        	Thread.sleep(25000);
             clickElement(allProductLocator, "All Products");
             clickElement(renewalLocator, "28 Day Renewal");
             Thread.sleep(3000);
@@ -78,6 +88,7 @@ public class BuyvoicepackPage {
     }
 
     public void specialOfferFlow() {
+        startTime = System.currentTimeMillis();
         try {
             clickElement(specialOfferLocator, "Special Offer");
             clickElement(buyPackLocator, "Buy Pack");
@@ -93,6 +104,7 @@ public class BuyvoicepackPage {
     }
 
     public void hourlyOneDayFlow() {
+        startTime = System.currentTimeMillis();
         try {
             Thread.sleep(5000);
             clickElement(hourlyOneDayLocator, "Hourly - 1 Day");
@@ -110,6 +122,7 @@ public class BuyvoicepackPage {
     }
 
     public void threeToSevenDayFlow() {
+        startTime = System.currentTimeMillis();
         try {
             clickElement(threeToSevenDayLocator, "3 - 7 Days");
             Thread.sleep(8000);
@@ -126,6 +139,7 @@ public class BuyvoicepackPage {
     }
 
     public void twentyEightDaysFlow() {
+        startTime = System.currentTimeMillis();
         try {
             clickElement(twentyEightDayLocator, "28 Days");
             Thread.sleep(8000);
@@ -134,7 +148,10 @@ public class BuyvoicepackPage {
             clickElement(cancelLocator, "Cancel");
             clickElement(twentyEightDayOneTimeLocator, "28 Day One Time");
             Thread.sleep(3000);
-            completePurchaseFlow();
+            clickElement(nooLocator, "Cancel");
+            clickElement(paymentMethodLocator, "Pay By Balance");
+            clickElement(confirmLocator, "Confirm");
+            clickElement(noLocator, "No Button");
         } catch (Exception e) {
             takeScreenshot("twentyEightDaysFlowError");
             Assert.fail("Failed in twentyEightDaysFlow: " + e.getMessage());
@@ -142,6 +159,7 @@ public class BuyvoicepackPage {
     }
 
     public void eightyFourDaysFlow() {
+        startTime = System.currentTimeMillis();
         try {
             clickElement(eightyFourDayLocator, "84 Days");
             Thread.sleep(8000);
@@ -158,6 +176,7 @@ public class BuyvoicepackPage {
     }
 
     public void indiaIldFlow() {
+        startTime = System.currentTimeMillis();
         try {
             clickElement(indiaIldLocator, "India + ILD");
             Thread.sleep(8000);
@@ -167,13 +186,12 @@ public class BuyvoicepackPage {
             clickElement(noLocator, "No Button");
             clickElement(detailLocator, "Details");
             completePurchaseFlow();
+            clickElement(homePageBackButtonLocator, "Home Page Back Button/Icon");
         } catch (Exception e) {
             takeScreenshot("indiaIldFlowError");
             Assert.fail("Failed in indiaIldFlow: " + e.getMessage());
         }
     }
-
-    // --- Private utility methods ---
 
     private void completePurchaseFlow() throws InterruptedException {
         clickElement(buyPackLocatorDetails, "Buy Button in Details");
@@ -187,6 +205,11 @@ public class BuyvoicepackPage {
         boolean found = false;
 
         for (int i = 0; i < maxSwipes; i++) {
+            if (isTimedOut()) {
+                takeScreenshot("Timeout_" + name.replace(" ", "_"));
+                Assert.fail("Test timed out while trying to find: " + name);
+            }
+
             try {
                 var elements = driver.findElements(locator);
                 if (!elements.isEmpty()) {
@@ -217,7 +240,7 @@ public class BuyvoicepackPage {
         int width = driver.manage().window().getSize().width;
         int startX = width / 2;
         int startY = (int) (height * 0.8);
-        int endY = (int) (height * 0.3);
+        int endY = (int) (height * 0.1);
 
         new TouchAction<>(driver)
                 .press(PointOption.point(startX, startY))
@@ -261,6 +284,11 @@ public class BuyvoicepackPage {
     }
 
     private void clickElement(By locator, String elementName) {
+        if (isTimedOut()) {
+            takeScreenshot("Timeout_" + elementName.replace(" ", "_"));
+            Assert.fail("Test timed out while waiting for: " + elementName);
+        }
+
         try {
             MobileElement element = (MobileElement) wait.until(ExpectedConditions.elementToBeClickable(locator));
             element.click();
@@ -270,5 +298,9 @@ public class BuyvoicepackPage {
             Assert.fail("Failed to click on: " + elementName + " - " + e.getMessage());
         }
     }
-}
-  
+
+    private boolean isTimedOut() {
+        long elapsedSeconds = (System.currentTimeMillis() - startTime) / 1000;
+        return elapsedSeconds > globalTimeoutSeconds;
+    }
+}   

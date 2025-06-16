@@ -42,18 +42,24 @@ public class wificallingPage {
         this.wait = new WebDriverWait(driver, 40);
     }
 
-    private final By wificallingLocator = MobileBy.AccessibilityId("WiFi Calling");
-    private final By downArrowLocator = MobileBy.xpath("//android.view.ViewGroup[@resource-id=\"card-container\"]");
-    private final By elegibilityLocator = MobileBy.xpath("//android.widget.Button[@content-desc=\"Check Eligibility\"]/android.view.ViewGroup/android.view.View");
-    private final By checkcapabledeviceLocator = MobileBy.xpath("//android.widget.Button[@content-desc=\"Check the Capable Devices\"]/android.view.ViewGroup/android.view.View");
+    private By getButtonByContentDesc(String contentDesc) {
+        return MobileBy.xpath(String.format("//android.widget.Button[@content-desc='%s']/android.view.ViewGroup/android.view.View", contentDesc));
+    }
 
-    // --- Public flows ---
+    private By getViewGroupByResourceId(String resourceId) {
+        return MobileBy.xpath(String.format("//android.view.ViewGroup[@resource-id='%s']", resourceId));
+    }
+
+    private final By wificallingLocator = MobileBy.AccessibilityId("WiFi Calling");
+    private final By downArrowLocator = getViewGroupByResourceId("card-container");
+    private final By eligibilityLocator = getButtonByContentDesc("Check Eligibility");
+    private final By checkCapableDeviceLocator = getButtonByContentDesc("Check the Capable Devices");
+    private final By homePageBackButtonLocator = MobileBy.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.view.ViewGroup");
 
     public void openwifi() {
         try {
             logger.info("Attempting to open WiFi calling by clicking down arrow with swipe.");
             clickElementWithSwipe(downArrowLocator, "Down Arrow");
-            takeScreenshot("openwifi_after_click");
         } catch (Exception e) {
             logger.error("Exception in openwifi(): {}", e.getMessage(), e);
             Assert.fail("Failed in openwifi(): " + e.getMessage());
@@ -64,22 +70,18 @@ public class wificallingPage {
         try {
             logger.info("Starting wifi() flow.");
             clickElement(wificallingLocator, "WiFi Calling");
-            takeScreenshot("wifi_after_clicking_wificalling");
-            
-            clickElement(elegibilityLocator, "Eligibility");
-            takeScreenshot("wifi_after_clicking_eligibility");
-            
-            clickElement(checkcapabledeviceLocator, "Check Capable Device");
-            takeScreenshot("wifi_after_clicking_checkcapabledevice");
-            
+            Thread.sleep(15000);
+            clickElement(eligibilityLocator, "Eligibility");
+            clickElement(checkCapableDeviceLocator, "Check Capable Device");
+            clickElement(homePageBackButtonLocator, "Home Page Back Button/Icon");
+            Thread.sleep(8000);
+            clickElement(homePageBackButtonLocator, "Home Page Back Button/Icon");
             logger.info("Completed wifi() flow.");
         } catch (Exception e) {
             logger.error("Exception in wifi(): {}", e.getMessage(), e);
             Assert.fail("Failed in wifi(): " + e.getMessage());
         }
     }
-
-    // --- Core utilities ---
 
     private void clickElementWithSwipe(By locator, String name) {
         int maxSwipes = 5;
@@ -176,5 +178,3 @@ public class wificallingPage {
         }
     }
 }
-
-

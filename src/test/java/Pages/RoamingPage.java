@@ -39,8 +39,7 @@ public class RoamingPage {
         logger.info("Initialized RoamingPage");
     }
 
-    // --- Locators ---
-    private final By downArrowLocator = MobileBy.xpath("//android.view.ViewGroup[@resource-id=\"card-container\"]");
+    private final By downArrowLocator = MobileBy.AccessibilityId("card-container");
     private final By roamingLocator = MobileBy.AccessibilityId("Roaming");
     private final By closeLocator = MobileBy.AccessibilityId("Close");
     private final By indiaLocator = MobileBy.AccessibilityId("India");
@@ -48,25 +47,43 @@ public class RoamingPage {
     private final By lowToHighLocator = MobileBy.AccessibilityId("Low to high");
     private final By validityLocator = MobileBy.AccessibilityId("Validity");
     private final By daysLocator = MobileBy.AccessibilityId("4-7 days");
-    private final By paymentMethodLocator = MobileBy.xpath("//android.view.ViewGroup[@content-desc=\"Pay By Balance\"]");
-    private final By confirmLocator = MobileBy.xpath("//android.view.ViewGroup[@content-desc=\"Confirm\"]");
-    private final By buyPackLocator = MobileBy.xpath("(//android.view.ViewGroup[@content-desc=\"Buy Pack\"])[1]/android.view.ViewGroup");
-    private final By detailLocator = MobileBy.xpath("(//android.view.ViewGroup[@content-desc=\"Details\"])[1]");
-    private final By buyPackLocator1 = MobileBy.xpath("//android.widget.Button[@content-desc=\"Buy pack\"]/android.view.ViewGroup/android.view.View");
-    private final By noLocator = MobileBy.xpath("//android.view.ViewGroup[@content-desc=\"NO\"]/android.view.ViewGroup");
+    private final By homePageBackButtonLocator = MobileBy.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.view.ViewGroup");
 
-    // --- Public flow ---
+    private By paymentMethodLocator() {
+        return MobileBy.AccessibilityId("Pay By Balance");
+    }
+
+    private By confirmLocator() {
+        return MobileBy.AccessibilityId("Confirm");
+    }
+
+    private By buyPackLocator() {
+        return MobileBy.xpath("//android.view.ViewGroup[contains(@content-desc, 'Buy Pack')]");
+    }
+
+    private By detailLocator() {
+        return MobileBy.xpath("//android.view.ViewGroup[contains(@content-desc, 'Details')]");
+    }
+
+    private By buyPackFromDetailLocator() {
+        return MobileBy.xpath("//android.widget.Button[contains(@content-desc, 'Buy pack')]");
+    }
+
+    private By noLocator() {
+        return MobileBy.AccessibilityId("NO");
+    }
+
     public void performRoamingPackFlow() {
         try {
-            clickElementWithSwipe(downArrowLocator, "Down Arrow");
             clickElementWithSwipe(roamingLocator, "Roaming Tab");
+            Thread.sleep(3000);
             clickElement(closeLocator, "Close Button");
 
             Thread.sleep(5000);
 
             clickElement(indiaLocator, "India Button");
 
-            Thread.sleep(15000);
+            Thread.sleep(20000);
 
             clickElement(sortByPriceLocator, "Sort by Price");
             clickElement(lowToHighLocator, "Low to High");
@@ -75,14 +92,15 @@ public class RoamingPage {
 
             Thread.sleep(10000);
 
-            clickElement(buyPackLocator, "Buy Pack");
-            clickElement(paymentMethodLocator, "Pay By Balance");
-            clickElement(confirmLocator, "Confirm Payment");
-            clickElement(noLocator, "No Button to Close Confirmation");
-            clickElement(detailLocator, "Details");
-            clickElement(buyPackLocator1, "Buy Button in Details");
+            clickElement(buyPackLocator(), "Buy Pack");
+            clickElement(paymentMethodLocator(), "Pay By Balance");
+            clickElement(confirmLocator(), "Confirm Payment");
+            clickElement(noLocator(), "No Button to Close Confirmation");
+            clickElement(detailLocator(), "Details");
+            clickElement(buyPackFromDetailLocator(), "Buy Button in Details");
 
             reuse();
+            clickElement(homePageBackButtonLocator, "Home Page Back Button/Icon");
 
         } catch (Exception e) {
             logger.error("Roaming pack flow failed: {}", e.getMessage(), e);
@@ -92,12 +110,11 @@ public class RoamingPage {
     }
 
     public void reuse() {
-        clickElement(paymentMethodLocator, "Pay By Balance");
-        clickElement(confirmLocator, "Confirm Payment");
-        clickElement(noLocator, "No Button to Close Confirmation");
+        clickElement(paymentMethodLocator(), "Pay By Balance");
+        clickElement(confirmLocator(), "Confirm Payment");
+        clickElement(noLocator(), "No Button to Close Confirmation");
+        clickElement(homePageBackButtonLocator, "Home Page Back Button");
     }
-
-    // --- Utility methods ---
 
     private void clickElementWithSwipe(By locator, String name) {
         int maxSwipes = 6;
@@ -156,7 +173,7 @@ public class RoamingPage {
 
     private void waitAfterSwipe() {
         try {
-            Thread.sleep(20000);
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }

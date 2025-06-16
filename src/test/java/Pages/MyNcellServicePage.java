@@ -13,6 +13,7 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -26,18 +27,28 @@ public class MyNcellServicePage {
     public MyNcellServicePage(AndroidDriver<MobileElement> driver) {
         this.driver = driver;
         this.screenshotPath = System.getProperty("user.dir") + "/screenshots/";
-        }
+    }
 
-    private final By pinPukQueryLocator = MobileBy.AccessibilityId("PIN/PUK Query");
-    private final By esimLocator = MobileBy.AccessibilityId("E-sim");
-    private final By emergencyServicesLocator = MobileBy.AccessibilityId("Emergency Services");
-    private final By tollFreeNumbersLocator = MobileBy.AccessibilityId("Toll Free Numbers");
-    private final By noLocator = MobileBy.xpath("//android.widget.TextView[@resource-id=\"QuestionChoiceOption2\"]");
-    private final By submitLocator = MobileBy.xpath("//android.widget.Button[@text=\"Submit\"]");
-    private final By startnowLocator = MobileBy.xpath("//android.widget.Button[@text='Start now']");
-//   private final By searchLocator = MobileBy.id("root");
+  
+    private By byAccessibilityId(String id) {
+        return MobileBy.xpath("//*[@content-desc='" + id + "']");
+    }
 
-    // Method for PIN/PUK Query
+    private By byText(String text) {
+        return MobileBy.xpath("//*[@text='" + text + "']");
+    }
+
+ 
+    private final By pinPukQueryLocator = byAccessibilityId("PIN/PUK Query");
+    private final By esimLocator = byAccessibilityId("E-sim");
+    private final By emergencyServicesLocator = byAccessibilityId("Emergency Services");
+    private final By tollFreeNumbersLocator = byAccessibilityId("Toll Free Numbers");
+    private final By noLocator = byText("No");
+    private final By submitLocator = byText("Submit");
+    private final By startnowLocator = byText("Start now");
+
+    private final By homePageBackButtonLocator = MobileBy.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.view.ViewGroup");
+
     public void PinPukQuery() {
         int maxSwipes = 4;
         boolean found = false;
@@ -80,7 +91,6 @@ public class MyNcellServicePage {
 
                     try {
                         MobileElement startNowBtn = (MobileElement) wait.until(ExpectedConditions.presenceOfElementLocated(startnowLocator));
-
                         if (startNowBtn.isDisplayed()) {
                             startNowBtn.click();
                             System.out.println("Clicked 'Start now' button.");
@@ -92,8 +102,11 @@ public class MyNcellServicePage {
                         MobileElement submitBtn = (MobileElement) wait.until(ExpectedConditions.presenceOfElementLocated(submitLocator));
                         if (submitBtn.isDisplayed()) submitBtn.click();
 
+                        MobileElement Btn = (MobileElement) wait.until(ExpectedConditions.presenceOfElementLocated(homePageBackButtonLocator));
+                        Btn.click();
+                        Btn.click();
+
                     } catch (Exception e) {
-                        takeScreenshot("Esim_StartNow_Error");
                         Assert.fail("Start now flow failed: " + e.getMessage());
                     }
                     break;
@@ -105,13 +118,10 @@ public class MyNcellServicePage {
         }
 
         if (!found) {
-            takeScreenshot("Esim_NotFound");
             Assert.fail("E-sim option not found after " + maxSwipes + " swipes.");
         }
     }
 
-
-    // Method for Emergency Services
     public void EmergencyServices() {
         int maxSwipes = 3;
         boolean found = false;
@@ -139,7 +149,6 @@ public class MyNcellServicePage {
         }
     }
 
- // Method for Toll Free Numbers
     public void TollFreeNumbers() {
         int maxSwipes = 3;
         boolean found = false;
@@ -150,15 +159,10 @@ public class MyNcellServicePage {
                 MobileElement element1 = (MobileElement) wait.until(ExpectedConditions.presenceOfElementLocated(tollFreeNumbersLocator));
                 if (element1.isDisplayed()) {
                     element1.click();
-                    
-         /*        MobileElement element2 = (MobileElement) wait.until(ExpectedConditions.presenceOfElementLocated(searchLocator));
-                    if (element2.isDisplayed()) {
-                        element2.sendKeys(ConfigReader.getProperty("searchname"));     */
                     Thread.sleep(2000);
                     driver.navigate().back();
-                        found = true;
-                        break;
-                    
+                    found = true;
+                    break;
                 }
             } catch (Exception e) {
                 swipeUp();
@@ -171,7 +175,6 @@ public class MyNcellServicePage {
             Assert.fail("Toll Free Numbers not found after " + maxSwipes + " swipes.");
         }
     }
-
 
     private void swipeUp() {
         int height = driver.manage().window().getSize().height;
@@ -201,4 +204,3 @@ public class MyNcellServicePage {
         }
     }
 }
-

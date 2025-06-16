@@ -32,25 +32,36 @@ public class NcellNSLPage {
         }
     }
 
-    private final By nsllivematchLocator = MobileBy.xpath("//android.view.ViewGroup[@content-desc=\"NSL Live Match\"]");
-    private final By clickLocator = MobileBy.xpath("//android.view.View[@resource-id=\"player-control-overlay\"]/android.view.View[1]/android.widget.TextView[2]");
-    private final By spinandwinLocator = MobileBy.xpath("//android.view.ViewGroup[@content-desc=\"Spin and Win\"]");
-    private final By spinandwinbannerLocator = MobileBy.xpath("//android.widget.Button[@text=\"Close\"]");
-    private final By spinandwinclickLocator = MobileBy.xpath("//android.widget.Button[@text=\"Spin to Win\"]");
-    private final By fantasyLeagueLocator = MobileBy.xpath("//android.view.ViewGroup[@content-desc=\"Fantasy League\"]");
-    private final By DigitalLeagueLocator = MobileBy.xpath("//android.view.ViewGroup[@content-desc=\"Digital League\"]");
-    private final By PlanLocator= MobileBy.xpath("//android.widget.Button[@resource-id=\"submit\" and @text=\"6 MONTHS PACK @ RS.756 / 6 MONTHS\"]");
-    private final By phonenoLocator = MobileBy.xpath("//android.widget.EditText[@resource-id=\"msisdnInput\"]");
-    private final By submitLocator = MobileBy.xpath("//android.widget.Button[@resource-id=\"mySubmit\"]");
+    private By byContentDesc(String text) {
+        return MobileBy.xpath("//android.view.ViewGroup[@content-desc=\"" + text + "\"]");
+    }
 
-    public void NslLiveMatch() {
+    private By byContainsContentDesc(String partialText) {
+        return MobileBy.xpath("//android.view.ViewGroup[contains(@content-desc, \"" + partialText + "\")]");
+    }
+
+    private By byResourceIdAndText(String resourceId, String text) {
+        return MobileBy.xpath("//android.widget.Button[@resource-id=\"" + resourceId + "\" and @text=\"" + text + "\"]");
+    }
+
+    private By byResourceId(String resourceId) {
+        return MobileBy.xpath("//*[@resource-id=\"" + resourceId + "\"]");
+    }
+
+    private By byText(String text) {
+        return MobileBy.xpath("//*[@text=\"" + text + "\"]");
+    }
+
+    private final By clickLocator = MobileBy.xpath("//android.view.View[@resource-id=\"player-control-overlay\"]/android.view.View[1]/android.widget.TextView[2]");
+
+  /*  public void NslLiveMatch() {
         int maxSwipes = 3;
         boolean found = false;
 
         for (int i = 0; i < maxSwipes; i++) {
             try {
                 WebDriverWait wait = new WebDriverWait(driver, 60);
-                MobileElement element = (MobileElement) wait.until(ExpectedConditions.presenceOfElementLocated(nsllivematchLocator));
+                MobileElement element = (MobileElement) wait.until(ExpectedConditions.presenceOfElementLocated(byContentDesc("NSL Live Match")));
                 if (element.isDisplayed()) {
                     element.click();
                     MobileElement element2 = (MobileElement) wait.until(ExpectedConditions.presenceOfElementLocated(clickLocator));
@@ -70,11 +81,10 @@ public class NcellNSLPage {
         }
 
         if (!found) {
-            System.out.println("NSL Live Match not found after " + maxSwipes + " swipes.");
             takeScreenshot("NSLLiveMatch_NotFound");
             Assert.fail("NSL Live Match not found after " + maxSwipes + " swipes.");
         }
-    }
+    }      */
 
     public void Spinandwin() {
         int maxSwipes = 3;
@@ -83,18 +93,16 @@ public class NcellNSLPage {
         for (int i = 0; i < maxSwipes; i++) {
             try {
                 WebDriverWait wait = new WebDriverWait(driver, 50);
-                MobileElement element = (MobileElement) wait.until(ExpectedConditions.presenceOfElementLocated(spinandwinLocator));
+                MobileElement element = (MobileElement) wait.until(ExpectedConditions.presenceOfElementLocated(byContentDesc("Spin & Win")));
                 if (element.isDisplayed()) {
                     element.click();
-                    MobileElement element2 = (MobileElement) wait.until(ExpectedConditions.presenceOfElementLocated(spinandwinbannerLocator));
-                    if (element2.isDisplayed()) {
-                        element2.click();
-                    }
 
-                    MobileElement element3 = (MobileElement) wait.until(ExpectedConditions.presenceOfElementLocated(spinandwinclickLocator));
+                    MobileElement element3 = (MobileElement) wait.until(ExpectedConditions.presenceOfElementLocated(byResourceId("spinButton")));
                     if (element3.isDisplayed()) {
+                    	Thread.sleep(5000);
                         element3.click();
-                        driver.navigate().back();
+                        Thread.sleep(4000);
+                       driver.navigate().back();
                         Thread.sleep(2000);
                     }
                     Thread.sleep(1500);
@@ -108,7 +116,6 @@ public class NcellNSLPage {
         }
 
         if (!found) {
-            System.out.println("Spin and Win not found after " + maxSwipes + " swipes.");
             takeScreenshot("SpinAndWin_NotFound");
             Assert.fail("Spin and Win not found after " + maxSwipes + " swipes.");
         }
@@ -121,16 +128,15 @@ public class NcellNSLPage {
         for (int i = 0; i < maxSwipes; i++) {
             try {
                 WebDriverWait wait = new WebDriverWait(driver, 40);
-                MobileElement element = (MobileElement) wait.until(ExpectedConditions.presenceOfElementLocated(fantasyLeagueLocator));
-
+                MobileElement element = (MobileElement) wait.until(ExpectedConditions.presenceOfElementLocated(byContentDesc("Fantasy League")));
                 if (element.isDisplayed()) {
                     element.click();
-                    Thread.sleep(20000); 
-                    takeScreenshot("FantasyLeague_Error_Page"); 
+                    Thread.sleep(20000);
+                    takeScreenshot("FantasyLeague_Error_Page");
                     throw new AssertionError("Test failed: Error page appears after clicking Fantasy League.");
                 }
             } catch (Exception e) {
-                swipeUp(); 
+                swipeUp();
             }
         }
 
@@ -147,24 +153,30 @@ public class NcellNSLPage {
         for (int i = 0; i < maxSwipes; i++) {
             try {
                 WebDriverWait wait = new WebDriverWait(driver, 50);
-                MobileElement element = (MobileElement) wait.until(ExpectedConditions.presenceOfElementLocated(DigitalLeagueLocator));
+                MobileElement element = (MobileElement) wait.until(ExpectedConditions.presenceOfElementLocated(byContentDesc("Digital League")));
                 if (element.isDisplayed()) {
                     element.click();
-                    MobileElement element2 = (MobileElement) wait.until(ExpectedConditions.presenceOfElementLocated(PlanLocator));
-                    if (element2.isDisplayed()) {
-                        element2.click();
-                    }
-                    MobileElement element3 = (MobileElement) wait.until(ExpectedConditions.presenceOfElementLocated(phonenoLocator));
-                    if (element3.isDisplayed()) {
-                        element3.sendKeys(ConfigReader.getProperty("number"));
+
+                    MobileElement plan = (MobileElement) wait.until(ExpectedConditions.presenceOfElementLocated(
+                            byResourceIdAndText("submit", "6 MONTHS PACK @ RS.756 / 6 MONTHS")));
+                    if (plan.isDisplayed()) {
+                        plan.click();
                     }
 
-                  MobileElement element4 = (MobileElement) wait.until(ExpectedConditions.presenceOfElementLocated(submitLocator));
-                    if (element4.isDisplayed()) {
-                        element4.click();
+                    MobileElement phoneField = (MobileElement) wait.until(ExpectedConditions.presenceOfElementLocated(
+                            byResourceId("msisdnInput")));
+                    if (phoneField.isDisplayed()) {
+                        phoneField.sendKeys(ConfigReader.getProperty("number"));
+                    }
+
+                    MobileElement submitBtn = (MobileElement) wait.until(ExpectedConditions.presenceOfElementLocated(
+                            byResourceId("mySubmit")));
+                    if (submitBtn.isDisplayed()) {
+                        submitBtn.click();
                         driver.navigate().back();
                         Thread.sleep(2000);
-                    }            
+                    }
+
                     Thread.sleep(1500);
                     found = true;
                     break;
@@ -176,12 +188,10 @@ public class NcellNSLPage {
         }
 
         if (!found) {
-            System.out.println("DigitalLeague not found after " + maxSwipes + " swipes.");
             takeScreenshot("DigitalLeague_NotFound");
             Assert.fail("DigitalLeague not found after " + maxSwipes + " swipes.");
         }
     }
-
 
     private void swipeUp() {
         int height = driver.manage().window().getSize().height;
@@ -199,7 +209,6 @@ public class NcellNSLPage {
                 .perform();
     }
 
-
     private void takeScreenshot(String fileName) {
         try {
             File screenshot = driver.getScreenshotAs(OutputType.FILE);
@@ -212,4 +221,5 @@ public class NcellNSLPage {
         }
     }
 }
+
 

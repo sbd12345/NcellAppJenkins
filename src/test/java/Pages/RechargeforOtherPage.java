@@ -35,45 +35,39 @@ public class RechargeforOtherPage {
 
     public RechargeforOtherPage(AndroidDriver<MobileElement> driver) {
         this.driver = driver;
-        this.wait = new WebDriverWait(driver, 40);
+        this.wait = new WebDriverWait(driver, 60);
     }
-
-    private final By rechargeforotherLocator = MobileBy.AccessibilityId("Recharge For Others");
-    private final By downArrowLocator = MobileBy.xpath("//android.view.ViewGroup[@resource-id=\"card-container\"]");
     private final By crossIconLocator = By.xpath("//android.widget.TextView[@text='']");
-    private final By payOnlineLocator = By.xpath("//android.view.ViewGroup[@content-desc=\"Pay Online \"]/android.view.ViewGroup");
-    private final By enterAmountLocator= By.xpath("//android.view.ViewGroup[@content-desc=\"Rs.30\"]");
-    private final By MOBILE_NUMBER= By.xpath("//android.widget.EditText[@text=\"Mobile Number\"]");
-    //private final By recharge1Locator= By.xpath("//android.widget.Button[@content-desc=\"Recharge\"]/android.view.ViewGroup/android.view.View");
-    private final By rechargeCardLocator= By.xpath("//android.view.ViewGroup[@content-desc=\"Recharge Card \"]/android.view.ViewGroup");
-    private final By PINLocator = By.xpath("//android.widget.EditText[@text=\"Enter 16 digit PIN\"]");
-    private final By proceedLocator = By.xpath("//android.widget.Button[@content-desc=\"Proceed\"]/android.view.ViewGroup/android.view.View");
-    private final By recentRechargeLocator = By.xpath("//android.widget.TextView[@text=\"Recent Recharges\"]");
+    private final By rechargeforotherLocator = By.xpath("//android.widget.TextView[@text='Recharge For Others']");
+    private final By MOBILE_NUMBER = By.xpath("//android.widget.EditText[contains(@text,'Mobile') or contains(@content-desc,'Mobile')]");
+    private final By PINLocator = By.xpath("//android.widget.EditText[contains(@text,'PIN')]");
+    private final By homePageBackButtonLocator = MobileBy.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.view.ViewGroup");
 
-
-    public void recharge1() {
-        try {
-            clickElementWithSwipe(downArrowLocator, "Down Arrow");
-        } catch (Exception e) {
-            logger.error("recharge1() failed: " + e.getMessage(), e);
-            takeScreenshot("recharge1Error");
-        }
+  
+    private By getByContentDesc(String partialText) {
+        return By.xpath("//*[contains(@content-desc,'" + partialText + "')]");
     }
+
+    private By getByText(String partialText) {
+        return By.xpath("//*[contains(@text,'" + partialText + "')]");
+    }
+
 
     public void recharge() {
         try {
+        	Thread.sleep(8000);
             clickElement(rechargeforotherLocator, "rechargeforother");
-            clickElement(crossIconLocator, "crossIcon");
-            clickElement(payOnlineLocator, "payOnline");
-            clickElement(enterAmountLocator, "enterAmount");
+        //    clickElement(crossIconLocator, "crossIcon");
+            clickElement(getByContentDesc("Pay Online"), "payOnline");
+            clickElement(getByContentDesc("Rs."), "enterAmount");
             enterMobileNumber(ConfigReader.getProperty("number"));
-            //clickElement(recharge1Locator, "recharge1");
-            clickElement(rechargeCardLocator, "rechargeCard");
+            clickElement(getByContentDesc("Recharge Card"), "rechargeCard");
             enterMobileNumber(ConfigReader.getProperty("number"));
             enterPin(ConfigReader.getProperty("PIN"));
-            clickElement(proceedLocator, "proceed");
-            clickElement(recentRechargeLocator, "recentRecharge");
+            clickElement(getByContentDesc("Proceed"), "proceed");
+            clickElement(getByText("Recent Recharges"), "recentRecharge");
             logger.info("recharge() flow completed successfully");
+            clickElement(homePageBackButtonLocator, "Home Page Back Button/Icon");
         } catch (Exception e) {
             logger.error("recharge() flow failed: " + e.getMessage(), e);
             takeScreenshot("rechargeFlowError");
@@ -200,6 +194,3 @@ public class RechargeforOtherPage {
         }
     }
 }
-
-
-

@@ -20,7 +20,7 @@ public class RechargeforOtherTest extends BaseTest {
         logger.info("Starting test: testRechargeForOther");
         try {
             RechargeforOtherPage page = new RechargeforOtherPage(driver);
-            page.recharge1();
+          
             page.recharge();
             logger.info("Recharge for Other test completed successfully");
         } catch (Exception e) {

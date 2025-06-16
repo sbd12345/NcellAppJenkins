@@ -22,7 +22,7 @@ public class PartnerServiceTest extends BaseTest {
         partneredServicePages = new PartneredServicePages(driver);
     }
 
-    @Test(priority = 1)
+    @Test(priority = 3)
     public void openHungamaTest() {
         try {
             logger.info("Starting test: openHungamaTest");
@@ -34,7 +34,7 @@ public class PartnerServiceTest extends BaseTest {
         }
     }
 
-    @Test(priority = 2)
+    @Test(priority = 1)
     public void openUnlimitedContentsTest() {
         try {
             logger.info("Starting test: openUnlimitedContentsTest");
@@ -46,7 +46,7 @@ public class PartnerServiceTest extends BaseTest {
         }
     }
 
-    @Test(priority = 3)
+    @Test(priority = 2)
     public void openMeroSchoolTest() {
         try {
             logger.info("Starting test: openMeroSchoolTest");
