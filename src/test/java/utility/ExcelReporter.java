@@ -17,54 +17,42 @@ public class ExcelReporter {
     }
 
     public void generateReport(String filePath) throws IOException {
-        Workbook workbook;
-        Sheet sheet;
+        // Always create a new workbook — no reading old one
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Test Results");
         File file = new File(filePath);
 
-        // Ensure directory exists
         File parentDir = file.getParentFile();
         if (parentDir != null && !parentDir.exists()) {
             parentDir.mkdirs();
         }
 
-        if (file.exists()) {
-            try (FileInputStream fis = new FileInputStream(file)) {
-                workbook = WorkbookFactory.create(fis);  
-            }
-            sheet = workbook.getSheetAt(0);
-        } else {
-            workbook = new XSSFWorkbook();
-            sheet = workbook.createSheet("Test Results");
+        Row headerRow = sheet.createRow(0);
+        String[] headers = {"Test Case", "Status", "Execution Time", "Duration", "Error Message"};
 
-            // Create header row
-            Row headerRow = sheet.createRow(0);
-            String[] headers = {"Test Case", "Status", "Execution Time", "Duration", "Error Message"};
+        CellStyle headerStyle = workbook.createCellStyle();
+        Font headerFont = workbook.createFont();
+        headerFont.setBold(true);
+        headerStyle.setFont(headerFont);
 
-            CellStyle headerStyle = workbook.createCellStyle();
-            Font headerFont = workbook.createFont();
-            headerFont.setBold(true);
-            headerStyle.setFont(headerFont);
-
-            for (int i = 0; i < headers.length; i++) {
-                Cell cell = headerRow.createCell(i);
-                cell.setCellValue(headers[i]);
-                cell.setCellStyle(headerStyle);
-            }
+        for (int i = 0; i < headers.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(headers[i]);
+            cell.setCellStyle(headerStyle);
         }
 
-        int rowNum = sheet.getLastRowNum() + 1;
 
+        int rowNum = 1;
         for (Object[] data : testData) {
             Row row = sheet.createRow(rowNum++);
             for (int i = 0; i < data.length; i++) {
                 Cell cell = row.createCell(i);
                 cell.setCellValue(data[i].toString());
 
-                // Apply status-based coloring
                 if (i == 1) {
                     CellStyle style = workbook.createCellStyle();
                     style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-                    switch (data[i].toString()) {
+                    switch (data[i].toString().toUpperCase()) {
                         case "PASS":
                             style.setFillForegroundColor(IndexedColors.LIGHT_GREEN.getIndex());
                             break;
@@ -80,7 +68,7 @@ public class ExcelReporter {
             }
         }
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < headers.length; i++) {
             sheet.autoSizeColumn(i);
         }
 
@@ -90,4 +78,3 @@ public class ExcelReporter {
         workbook.close();
     }
 }
-
