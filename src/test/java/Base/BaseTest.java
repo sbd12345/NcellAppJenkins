@@ -37,10 +37,11 @@ public class BaseTest {
         caps.setCapability("automationName", ConfigReader.getProperty("automationName"));
         caps.setCapability("noReset", Boolean.parseBoolean(ConfigReader.getProperty("noReset")));
         caps.setCapability("dontStopAppOnReset", true);
+        caps.setCapability("uiautomator2ServerLaunchTimeout", 120000);
+        caps.setCapability("adbExecTimeout", 120000);
+       caps.setCapability("appWaitDuration", 120000);
+         caps.setCapability("appWaitForLaunch", true);
 
-       
-        caps.setCapability("uiautomator2ServerLaunchTimeout", 60000);
-        caps.setCapability("appWaitDuration", 60000);
 
         // 🚀 Launch the Appium server session
         URL serverUrl = new URL(ConfigReader.getProperty("appiumServer"));
